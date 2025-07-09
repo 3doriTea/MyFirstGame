@@ -1,6 +1,6 @@
 # MyFirstGame
 
-教科書: https://sites.google.com/view/jc21engine2023/%E3%83%9B%E3%83%BC%E3%83%A0?authuser=0
+このリポジトリは学校の授業での課題提出用です。
 
 ## 目標
 
@@ -10,3 +10,7 @@
 
 > [!IMPORTANT]
 > ゲームエンジンの制作にハマりすぎて、ゲームが完成しない、という最悪の事態を避けること
+
+## 参考
+
+教科書: https://sites.google.com/view/jc21engine2023/%E3%83%9B%E3%83%BC%E3%83%A0?authuser=0
