@@ -113,11 +113,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//描画処理
 
 			static float angle{};
-			angle += XMConvertToRadians(0.01f);
-			if (angle > XM_2PI)
-				angle -= XM_2PI;
+			angle += XMConvertToRadians(0.1f);
+			if (angle > XM_2PI * 2.0f)
+				angle -= XM_2PI * 2.0f;
 
-			XMMATRIX mat = XMMatrixRotationY(angle) * XMMatrixRotationX(angle);
+			XMMATRIX mat = XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
 			quad->Draw(mat);
 
 			Direct3D::Instance().EndDraw();
