@@ -30,15 +30,15 @@ HRESULT Quad::Initialize(const char* _fileName)
 	// 頂点情報
 	Vertex vertices[]
 	{
-		// { { POSITION }, { UV } }
-		{ { -1.0f,  1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0, 0 } },  // 四角形の頂点（左上）
-		{ {  1.0f,  1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0, 0 } },  // 四角形の頂点（右上）
-		{ {  1.0f, -1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 0, 0 } },  // 四角形の頂点（右下）
-		{ { -1.0f, -1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0, 0 } },  // 四角形の頂点（左下）
+		// { { POSITION }, { UV }, { NORMAL } }
+		{ { -1.0f,  1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（左上）
+		{ {  1.0f,  1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（右上）
+		{ {  1.0f, -1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（右下）
+		{ { -1.0f, -1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（左下）
 	};
 
 	// 頂点データ用バッファの設定
-	D3D11_BUFFER_DESC bd_vertex;
+	D3D11_BUFFER_DESC bd_vertex{};
 	//bd_vertex.ByteWidth = sizeof(vertices);  // 型の大きさ
 	bd_vertex.ByteWidth = sizeof(vertices);  // 型の大きさ
 	bd_vertex.Usage = D3D11_USAGE_DEFAULT;
@@ -46,7 +46,7 @@ HRESULT Quad::Initialize(const char* _fileName)
 	bd_vertex.CPUAccessFlags = 0;
 	bd_vertex.MiscFlags = 0;
 	bd_vertex.StructureByteStride = 0;
-	D3D11_SUBRESOURCE_DATA data_vertex;
+	D3D11_SUBRESOURCE_DATA data_vertex{};
 	data_vertex.pSysMem = vertices;
 	hResult = Direct3D::Instance().pDevice->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
 
@@ -131,12 +131,15 @@ void Quad::Draw(const DirectX::XMMATRIX& _worldMatrix, const DirectX::XMMATRIX& 
 	CONSTANT_BUFFER cb{};
 	cb.matWVP = XMMatrixTranspose(_worldMatrix * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 	cb.textureMatrix = XMMatrixTranspose(_uvMatrix);
-
+	cb.matW = XMMatrixTranspose(_worldMatrix);
+	cb.matRotateW = XMMatrixTranspose(_worldMatrix);
+	cb.matRotateW.r[0].m128_f32[0] = 0.0;
+	cb.matRotateW.r[0].m128_f32[1] = 0.0;
+	cb.matRotateW.r[0].m128_f32[2] = 0.0;
 #pragma endregion
 
 #pragma region コンスタントバッファの送信
 	D3D11_MAPPED_SUBRESOURCE pdata{};
-
 	Direct3D::Instance().pContext->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
 	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
 

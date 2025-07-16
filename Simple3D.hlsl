@@ -12,8 +12,10 @@ SamplerState g_sampler : register(s0); //サンプラー
 //───────────────────────────────────────
 cbuffer global
 {
-    float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
-    float4x4 texMatrix;  // テクスチャマトリクス
+	float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
+	float4x4 texMatrix;  // テクスチャマトリクス
+	float4x4 matW;
+	float4x4 matRotateW;
 };
 
 //───────────────────────────────────────
@@ -21,26 +23,38 @@ cbuffer global
 //───────────────────────────────────────
 struct VS_OUT
 {
-        // セマンティクス 
-    float4 pos : SV_POSITION; // 位置
-    float4 uv : TEXCOORD;  // UV座標
+		// セマンティクス 
+	float4 pos : SV_POSITION; // 位置
+	float4 uv : TEXCOORD;  // UV座標
+	float4 color : COLOR; // 色 (明るさ)
 };
 
 //───────────────────────────────────────
 // 頂点シェーダ
 //───────────────────────────────────────
-VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD)  // 2個ポジションがあれば POSITION0 POSITION1 とか
+VS_OUT VS(
+	float4 pos : POSITION,
+	float4 normal : NORMAL,
+	float4 uv : TEXCOORD
+)  // 2個ポジションがあれば POSITION0 POSITION1 とか
 {  // メモリの都合でflaot4で受け取っている
 	//ピクセルシェーダーへ渡す情報
-    VS_OUT outData;
+	VS_OUT outData;
 
 	//ローカル座標に、ワールド・ビュー・プロジェクション行列をかけて
 	//スクリーン座標に変換し、ピクセルシェーダーへ
-    outData.pos = mul(pos, matWVP);
-    outData.uv = mul(uv, texMatrix);
-    
+	outData.pos = mul(pos, matWVP);
+	outData.uv = mul(uv, texMatrix);
+	
+	float4 light = float4(-1, 0.5, -0.7, 0);
+	light = normalize(light);
+	//normal = float4(0, 0, -1, 0);
+	//normal = float4(0, 0, 1, 0);
+	outData.color = dot(mul(normal, matRotateW), light);
+	//outData.color = normal;
+	
 	//まとめて出力
-    return outData;
+	return outData;
 }
 
 //───────────────────────────────────────
@@ -48,8 +62,8 @@ VS_OUT VS(float4 pos : POSITION, float4 uv : TEXCOORD)  // 2個ポジションがあれば
 //───────────────────────────────────────
 float4 PS(VS_OUT inData) : SV_Target
 {
-    //return float4(1, 1, 0, 1);
-    float4 color = g_texture.Sample(g_sampler, inData.uv.xy);
-
-    return color;
+	//return float4(1, 1, 0, 1);
+	float4 color = g_texture.Sample(g_sampler, inData.uv.xy) * inData.color;
+	
+	return color;
 }

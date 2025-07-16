@@ -1,9 +1,15 @@
 #include "Direct3D.h"
 #include <cassert>
+#include <d3d11shader.h>
 #include <d3dcompiler.h>
+
+#include <sstream>
 
 #include "Quad.h"
 #include "Texture.h"
+
+#pragma comment(lib, "D3DCompiler.lib")
+#pragma comment(lib, "dxguid.lib")
 
 
 HRESULT Direct3D::Initialize(const int winW, const int winH, HWND hWnd)
@@ -110,6 +116,35 @@ HRESULT Direct3D::InitializeShader()
 		return hResult;
 	}
 
+	{  // debug blob print
+		ID3D11ShaderReflection* pVertexShaderReflection = nullptr;
+		HRESULT hr = D3DReflect(
+			pCompileVS->GetBufferPointer(),
+			pCompileVS->GetBufferSize(),
+			IID_ID3D11ShaderReflection,
+			(void**)&pVertexShaderReflection
+		);
+		if (FAILED(hr)) {}
+
+		D3D11_SHADER_DESC shaderDesc;
+		pVertexShaderReflection->GetDesc(&shaderDesc);
+
+		std::stringstream ss{};
+		for (UINT i = 0; i < shaderDesc.InputParameters; i++) {
+			D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
+			pVertexShaderReflection->GetInputParameterDesc(i, &paramDesc);
+
+			ss << "SemanticName: " << paramDesc.SemanticName
+				<< ", SemanticIndex: " << paramDesc.SemanticIndex
+				<< ", Register: " << paramDesc.Register
+				<< ", SystemValueType: " << paramDesc.SystemValueType
+				<< ", Stream:" << paramDesc.Stream
+				<< std::endl;
+		}
+		std::string str = ss.str();
+		pVertexShaderReflection->Release();
+	}
+
 	hResult = pDevice->CreateVertexShader(pCompileVS->GetBufferPointer(), pCompileVS->GetBufferSize(), NULL, &pVertexShader);
 	
 	/*assert(SUCCEEDED(hResult)
@@ -126,8 +161,10 @@ HRESULT Direct3D::InitializeShader()
 	D3D11_INPUT_ELEMENT_DESC layout[]
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },  // 位置
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16 , D3D11_INPUT_PER_VERTEX_DATA, 0 },  // UV座標
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },  // UV座標
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32 , D3D11_INPUT_PER_VERTEX_DATA, 0 },  // 法線
 	};
+
 	hResult = pDevice->CreateInputLayout(
 		layout,
 		sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC),  // 要素数

@@ -12,10 +12,13 @@ private:
 	{
 		DirectX::XMMATRIX matWVP;
 		DirectX::XMMATRIX textureMatrix;
+		DirectX::XMMATRIX matW;
+		DirectX::XMMATRIX matRotateW;
 	};
 	struct Vertex
 	{
-		DirectX::XMFLOAT4 pos;  // 位置
+		DirectX::XMVECTOR pos;  // 位置
+		DirectX::XMVECTOR normal;  // 法線
 		DirectX::XMVECTOR uv;  // UV座標
 	};
 
