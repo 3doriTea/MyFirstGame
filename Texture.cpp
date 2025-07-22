@@ -39,6 +39,9 @@ HRESULT Texture::Load(std::string _fileName)
 		return hr;
 	}
 
+	size_.x = metadata.width;
+	size_.y = metadata.height;
+
 	D3D11_SAMPLER_DESC SamDesc{};
 	// MEMO: 線形補間もハードウェアでやってくれるらしい
 	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -46,7 +49,7 @@ HRESULT Texture::Load(std::string _fileName)
 	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	hr = Direct3D::Instance().pDevice->CreateSamplerState(&SamDesc, &pSampler_);
+	hr = Direct3D::Instance().pDevice_->CreateSamplerState(&SamDesc, &pSampler_);
 
 	if (FAILED(hr))
 	{
@@ -62,7 +65,7 @@ HRESULT Texture::Load(std::string _fileName)
 	srv.Texture2D.MipLevels = 1;  // LODのミップマップレベル
 
 	hr = CreateShaderResourceView(
-		Direct3D::Instance().pDevice,
+		Direct3D::Instance().pDevice_,
 		image.GetImages(),
 		image.GetImageCount(),
 		metadata,

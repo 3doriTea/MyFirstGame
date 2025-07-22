@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Quad.h"
 #include "Cube.h"
+#include "Sprite2D.h"
 
 HWND hWnd{ nullptr };
 
@@ -86,7 +87,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	if (FAILED(hResult))
 	{
 		SAFE_DELETE(quad);
-		Direct3D::Instance();
+		Direct3D::Release();
+		return FALSE;
+	}
+
+	Sprite2D* pSprite{ new Sprite2D{} };
+	hResult = pSprite->Initialize("Sushi512x512.png");
+
+	if (FAILED(hResult))
+	{
+		SAFE_DELETE(pSprite);
+		Direct3D::Release();
 		return FALSE;
 	}
 
@@ -117,14 +128,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			if (angle > XM_2PI * 2.0f)
 				angle -= XM_2PI * 2.0f;
 
-			XMMATRIX mat = XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
+			XMMATRIX mat{};
+			mat = XMMatrixIdentity();
+			mat *= XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
+			float scalingAngle{ angle };
+			scalingAngle = 0.1f;
+			mat *= DirectX::XMMatrixScaling(
+				std::fabsf(std::cosf(scalingAngle) * 4),
+				std::fabsf(std::cosf(scalingAngle) * 3),
+				std::fabsf(std::cosf(scalingAngle) * 2));
 			quad->Draw(mat);
+
+			mat = XMMatrixIdentity();
+			mat *= XMMatrixRotationY(angle / 2.0f) * XMMatrixRotationX(angle / 1.0f);
+			mat *= DirectX::XMMatrixScaling(
+				std::fabsf(std::cosf(scalingAngle) * 2),
+				std::fabsf(std::cosf(scalingAngle) * 1),
+				std::fabsf(std::cosf(scalingAngle) * 3));
+			quad->Draw(mat);
+
+			pSprite->Draw({ 0, 0, Direct3D::ScreenSize() / 2 }, 0.0f);
 
 			Direct3D::Instance().EndDraw();
 			//描画処理
+
 		}
 
 	}
+
+	SAFE_RELEASE(pSprite);
+	SAFE_DELETE(pSprite);
 
 	SAFE_RELEASE(quad);
 	SAFE_DELETE(quad);

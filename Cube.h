@@ -24,5 +24,5 @@ public:
 	~Cube();
 
 	HRESULT Initialize() override;
-	void Draw(DirectX::XMMATRIX& worldMatrix) override;
+	void Draw(const DirectX::XMMATRIX& worldMatrix) override;
 };

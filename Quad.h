@@ -10,10 +10,12 @@ private:
 	// コンスタントバッファー
 	struct CONSTANT_BUFFER
 	{
-		DirectX::XMMATRIX matWVP;
-		DirectX::XMMATRIX textureMatrix;
-		DirectX::XMMATRIX matW;
-		DirectX::XMMATRIX matRotateW;
+		DirectX::XMMATRIX matWVP;  // スクリーン空間のやつ
+		DirectX::XMMATRIX textureMatrix;  // テクスチャのマトリクス
+		DirectX::XMMATRIX matW;  // ワールド行列
+		DirectX::XMMATRIX matRotateW;  // 法線用の行列
+		DirectX::XMVECTOR lightDir;  // 平行光線の向きベクトル
+		float ambientValue;  // 環境光の明るさ
 	};
 	struct Vertex
 	{
@@ -27,7 +29,7 @@ public:
 	virtual ~Quad();
 	virtual HRESULT Initialize();
 	virtual HRESULT Initialize(const char* _fileName);
-	virtual void Draw(DirectX::XMMATRIX& _worldMatrix);
+	virtual void Draw(const DirectX::XMMATRIX& _worldMatrix);
 	virtual void Draw(const DirectX::XMMATRIX& _worldMatrix, const DirectX::XMMATRIX& _uvMatrix);
 	void Release();
 

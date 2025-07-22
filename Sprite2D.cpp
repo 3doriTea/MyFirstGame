@@ -1,12 +1,11 @@
-#include "Quad.h"
+#include "Sprite2D.h"
 #include <cassert>
 #include <cmath>
-#include "Camera.h"
 #include "Texture.h"
 
 using namespace DirectX;
 
-Quad::Quad() :
+Sprite2D::Sprite2D() :
 	pVertexBuffer_{ nullptr },
 	pIndexBuffer_{ nullptr },
 	pConstantBuffer_{ nullptr },
@@ -14,28 +13,23 @@ Quad::Quad() :
 {
 }
 
-Quad::~Quad()
+Sprite2D::~Sprite2D()
 {
 }
 
-HRESULT Quad::Initialize()
+HRESULT Sprite2D::Initialize(const char* _fileName)
 {
-	return Initialize("Sushi512x512.png");
-}
-
-HRESULT Quad::Initialize(const char* _fileName)
-{
-	HRESULT hResult{};//512x256
+	HRESULT hResult{};
 
 #pragma region 頂点バッファを作成
 	// 頂点情報
 	Vertex vertices[]
 	{
 		// { { POSITION }, { UV }, { NORMAL } }
-		{ { -1.0f,  1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（左上）
-		{ {  1.0f,  1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（右上）
-		{ {  1.0f, -1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（右下）
-		{ { -1.0f, -1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0, 0 }, { 0, 0, -1, 0 } },  // 四角形の頂点（左下）
+		{ { -1.0f,  1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0, 0 } },  // 四角形の頂点（左上）
+		{ {  1.0f,  1.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0, 0 } },  // 四角形の頂点（右上）
+		{ {  1.0f, -1.0f, 0.0f, 0.0f }, { 1.0f, 1.0f, 0, 0 } },  // 四角形の頂点（右下）
+		{ { -1.0f, -1.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0, 0 } },  // 四角形の頂点（左下）
 	};
 
 	// 頂点データ用バッファの設定
@@ -121,34 +115,58 @@ HRESULT Quad::Initialize(const char* _fileName)
 	return S_OK;
 }
 
-void Quad::Draw(const DirectX::XMMATRIX& _worldMatrix)
+void Sprite2D::Draw(const RectanInt& _dest)
 {
-	Draw(_worldMatrix, XMMatrixIdentity());
+	Draw(_dest, 0.0f);
 }
 
-void Quad::Draw(const DirectX::XMMATRIX& _worldMatrix, const DirectX::XMMATRIX& _uvMatrix)
+void Sprite2D::Draw(const RectanInt& _dest, const float _angle)
 {
-	Direct3D::SetShader(Direct3D::SHADER_3D);
+	Draw(_dest, _angle, { Vector2Int{ 0, 0 }, { 1, 1 } });
+}
+
+void Sprite2D::Draw(const RectanInt& _dest, const float _angle, const RectanInt& _src)
+{
+	Direct3D::SetShader(Direct3D::SHADER_2D);
 
 #pragma region コンスタントバッファに渡す情報
 	CONSTANT_BUFFER cb{};
-	cb.matWVP = XMMatrixTranspose(_worldMatrix * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-	cb.textureMatrix = XMMatrixTranspose(_uvMatrix);
-	cb.matW = XMMatrixTranspose(_worldMatrix);
-	cb.matRotateW = XMMatrixInverse(nullptr, _worldMatrix);
-	cb.ambientValue = 0.3f;
-	static float angle{ XM_1DIVPI };
-	angle += 0.001f;
-	angle = std::fmodf(angle, XM_2PI);
-	cb.lightDir = { std::cosf(angle), 0.5, -0.7, 0};
-	/*XMMatrixTranspose(_worldMatrix);
-	cb.matRotateW.r[0].m128_f32[0] = 0.0;
-	cb.matRotateW.r[0].m128_f32[1] = 0.0;
-	cb.matRotateW.r[0].m128_f32[2] = 0.0;*/
-	// TODO: スケールが1:1:1じゃない場合、法線がよろしくなくなる
-	// ワールド座標の逆行列の転置
-	// ゴリゴリごりと計算していくと、ワールド行列の逆行列を転置したのと同じなる
-	// 工学系の大学3年生の線形代数の知識が必要
+
+	const XMFLOAT2 SCREEN_SIZE{ Direct3D::ScreenSize().ToFloat() };
+
+	XMFLOAT2 pivot{ _dest.pivot.ToFloat() };
+	XMFLOAT2 size{ _dest.size.ToFloat() };
+	
+	size.x /= SCREEN_SIZE.x;
+	size.y /= SCREEN_SIZE.y;
+
+	//pivot.x -= SCREEN_SIZE.x / 2.0f;
+	//pivot.y -= SCREEN_SIZE.y / 2.0f;
+	
+	/*
+	pivot.x += 1.0f;
+	pivot.y += 1.0f;
+	size.x += 1.0f;
+	size.y += 1.0f;
+	*/
+
+	cb.matWVP = XMMatrixTranspose(
+		XMMatrixIdentity()
+		* XMMatrixScaling(size.x, size.y, 0.0f))
+		* XMMatrixRotationZ(_angle)
+		* XMMatrixTranslation(pivot.x, pivot.y, 0.0f);
+
+	XMFLOAT2 srcPivot{ _src.pivot.ToFloat() };
+	XMFLOAT2 srcSize{ _src.size.ToFloat() };
+
+	/*srcPivot.x /= SCREEN_SIZE.x;
+	srcPivot.y /= SCREEN_SIZE.y;
+	srcSize.x /= SCREEN_SIZE.x;
+	srcSize.y /= SCREEN_SIZE.y;*/
+
+	cb.matUV = XMMatrixTranspose(
+		XMMatrixTranslation(srcPivot.x, srcPivot.y, 0.0f)
+		* XMMatrixScaling(srcSize.x, srcSize.y, 0.0f));
 #pragma endregion
 
 #pragma region コンスタントバッファの送信
@@ -187,17 +205,6 @@ void Quad::Draw(const DirectX::XMMATRIX& _worldMatrix, const DirectX::XMMATRIX& 
 	Direct3D::Instance().pContext_->DrawIndexed(6, 0, 0);
 }
 
-void Quad::Release()
+void Sprite2D::Release()
 {
-	pTexture_->Release();
-	SAFE_DELETE(pTexture_);
-
-	// 逆順でrelease
-	SAFE_RELEASE(pConstantBuffer_);
-	SAFE_RELEASE(pIndexBuffer_);
-	SAFE_RELEASE(pVertexBuffer_);
 }
-
-//ID3D11Buffer* Quad::pVertexBuffer_{ nullptr };
-//ID3D11Buffer* Quad::pIndexBuffer_{ nullptr };
-//ID3D11Buffer* Quad::pConstantBuffer_{ nullptr };

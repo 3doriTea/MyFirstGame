@@ -13,11 +13,7 @@ SamplerState g_sampler : register(s0); //サンプラー
 cbuffer global
 {
 	float4x4 matWVP; // ワールド・ビュー・プロジェクションの合成行列
-	float4x4 texMatrix;  // テクスチャマトリクス
-	float4x4 matW;
-	float4x4 matRotateW;
-	float4 lightDir;  // ライトの向き
-    float ambientValue;  // 環境光の量
+	float4x4 texMatrix; // テクスチャマトリクス
 };
 
 //───────────────────────────────────────
@@ -27,8 +23,7 @@ struct VS_OUT
 {
 		// セマンティクス 
 	float4 pos : SV_POSITION; // 位置
-	float4 uv : TEXCOORD;  // UV座標
-	float4 color : COLOR; // 色 (明るさ)
+	float4 uv : TEXCOORD; // UV座標
 };
 
 //───────────────────────────────────────
@@ -36,10 +31,9 @@ struct VS_OUT
 //───────────────────────────────────────
 VS_OUT VS(
 	float4 pos : POSITION,
-	float4 normal : NORMAL,
 	float4 uv : TEXCOORD
 )  // 2個ポジションがあれば POSITION0 POSITION1 とか
-{  // メモリの都合でflaot4で受け取っている
+{ // メモリの都合でflaot4で受け取っている
 	//ピクセルシェーダーへ渡す情報
 	VS_OUT outData;
 
@@ -47,15 +41,6 @@ VS_OUT VS(
 	//スクリーン座標に変換し、ピクセルシェーダーへ
 	outData.pos = mul(pos, matWVP);
 	outData.uv = mul(uv, texMatrix);
-	
-	float4 light = normalize(lightDir);
-	
-    normal = mul(normal, matRotateW);
-    normal.w = 0;
-	//normal = float4(0, 0, -1, 0);
-	//normal = float4(0, 0, 1, 0);
-    outData.color = saturate(dot(normal, light));
-	//outData.color = normal;
 	
 	//まとめて出力
 	return outData;
@@ -66,10 +51,7 @@ VS_OUT VS(
 //───────────────────────────────────────
 float4 PS(VS_OUT inData) : SV_Target
 {
-	//return float4(1, 1, 0, 1);
 	float4 textureColor = g_texture.Sample(g_sampler, inData.uv.xy);
-    float4 ambient = textureColor * float4(ambientValue, ambientValue, ambientValue, 1);
-	float4 diffuse = textureColor * inData.color;
-	
-	return diffuse + ambient;
+
+	return textureColor;
 }

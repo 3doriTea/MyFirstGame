@@ -18,7 +18,7 @@ HRESULT Cube::Initialize()
 	return Quad::Initialize("Dice.png");
 }
 
-void Cube::Draw(XMMATRIX& worldMatrix)
+void Cube::Draw(const XMMATRIX& worldMatrix)
 {
 	static const int QUADS_COUNT{ 6 };
 	QuadData quads[QUADS_COUNT]
