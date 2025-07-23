@@ -25,6 +25,7 @@ public:
 	Sprite2D();
 	virtual ~Sprite2D();
 
+	virtual Vector2Int GetSize() const;
 	virtual HRESULT Initialize(const char* _fileName);
 	virtual void Draw(const RectanInt& _dest);
 	virtual void Draw(const RectanInt& _dest, const float _angle);

@@ -147,7 +147,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				std::fabsf(std::cosf(scalingAngle) * 3));
 			quad->Draw(mat);
 
-			pSprite->Draw({ 0, 0, Direct3D::ScreenSize() / 2 }, 0.0f);
+			const Vector2Int imageSize{ pSprite->GetSize() };
+			pSprite->Draw(
+				{ 0, 0, (Direct3D::ScreenSize() / 2) },
+				angle,
+				{
+					static_cast<int>(std::fabsf(std::sinf(angle)) * (imageSize.x / 2)),
+					static_cast<int>(std::fabsf(std::sinf(angle)) * (imageSize.y / 2)),
+					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
+					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
+				});
 
 			Direct3D::Instance().EndDraw();
 			//描画処理

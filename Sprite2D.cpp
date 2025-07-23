@@ -17,6 +17,11 @@ Sprite2D::~Sprite2D()
 {
 }
 
+Vector2Int Sprite2D::GetSize() const
+{
+	return pTexture_->GetSize();
+}
+
 HRESULT Sprite2D::Initialize(const char* _fileName)
 {
 	HRESULT hResult{};
@@ -122,7 +127,7 @@ void Sprite2D::Draw(const RectanInt& _dest)
 
 void Sprite2D::Draw(const RectanInt& _dest, const float _angle)
 {
-	Draw(_dest, _angle, { Vector2Int{ 0, 0 }, { 1, 1 } });
+	Draw(_dest, _angle, { Vector2Int{ 0, 0 }, pTexture_->GetSize() });
 }
 
 void Sprite2D::Draw(const RectanInt& _dest, const float _angle, const RectanInt& _src)
@@ -159,10 +164,10 @@ void Sprite2D::Draw(const RectanInt& _dest, const float _angle, const RectanInt&
 	XMFLOAT2 srcPivot{ _src.pivot.ToFloat() };
 	XMFLOAT2 srcSize{ _src.size.ToFloat() };
 
-	/*srcPivot.x /= SCREEN_SIZE.x;
+	srcPivot.x /= SCREEN_SIZE.x;
 	srcPivot.y /= SCREEN_SIZE.y;
 	srcSize.x /= SCREEN_SIZE.x;
-	srcSize.y /= SCREEN_SIZE.y;*/
+	srcSize.y /= SCREEN_SIZE.y;
 
 	cb.matUV = XMMatrixTranspose(
 		XMMatrixTranslation(srcPivot.x, srcPivot.y, 0.0f)
