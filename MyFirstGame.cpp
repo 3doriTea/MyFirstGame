@@ -150,7 +150,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			};
 
 			//quad->Draw(mat);
-			transform.Calclation();
+			transform.Calculation();
 			quad->Draw(transform.GetWorldMatrix());
 
 			/*mat = XMMatrixIdentity();
@@ -170,7 +170,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				std::fabsf(std::cosf(scalingAngle) * 1),
 				std::fabsf(std::cosf(scalingAngle) * 3),
 			};
-			transform.Calclation();
+			transform.Calculation();
 			quad->Draw(transform.GetWorldMatrix());
 
 			pSprite->Draw(
