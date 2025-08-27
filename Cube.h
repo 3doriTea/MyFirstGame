@@ -1,5 +1,6 @@
 #pragma once
 #include "Quad.h"
+#include "Transform.h"
 
 class Cube : public Quad
 {
@@ -25,4 +26,5 @@ public:
 
 	HRESULT Initialize() override;
 	void Draw(const DirectX::XMMATRIX& worldMatrix) override;
+	void Draw(const Transform& _transform);
 };

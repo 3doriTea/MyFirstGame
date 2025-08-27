@@ -9,6 +9,8 @@
 
 #include "Direct3D.h"
 
+#include "Transform.h"
+
 #include "Camera.h"
 #include "Quad.h"
 #include "Cube.h"
@@ -103,18 +105,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	while (msg.message != WM_QUIT)
 	{
-		//メッセージあり
-		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-
+		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))  //メッセージあり
 		{
-
 			TranslateMessage(&msg);
-
 			DispatchMessage(&msg);
-
 		}
-		//メッセージなし
-		else
+		else  //メッセージなし
 		{
 			Camera::Update();  // カメラ更新のタイミングはここが望ましい!!
 
@@ -124,36 +120,66 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//描画処理
 
 			static float angle{};
+			const Vector2Int imageSize{ pSprite->GetSize() };
+			static Vector2Int pickPos{ (imageSize.x / 2), (imageSize.y / 2) };
+			
 			angle += XMConvertToRadians(0.1f);
 			if (angle > XM_2PI * 2.0f)
+			{
 				angle -= XM_2PI * 2.0f;
+				auto getRand
+				{
+					[]() -> float { return std::rand() / static_cast<float>(RAND_MAX); }
+				};
 
-			XMMATRIX mat{};
-			mat = XMMatrixIdentity();
-			mat *= XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
+				pickPos = { static_cast<int>(getRand() * imageSize.x), static_cast<int>(getRand() * imageSize.y) };
+			}
+
+			Transform transform{};
+
+			//XMMATRIX mat{};
+			transform.rotate_ = { angle, angle / 2.0f, 0.0f };
+			//mat *= XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
 			float scalingAngle{ angle };
 			scalingAngle = 0.1f;
-			mat *= DirectX::XMMatrixScaling(
+			transform.scale_ =
+			{
 				std::fabsf(std::cosf(scalingAngle) * 4),
 				std::fabsf(std::cosf(scalingAngle) * 3),
-				std::fabsf(std::cosf(scalingAngle) * 2));
-			quad->Draw(mat);
+				std::fabsf(std::cosf(scalingAngle) * 2),
+			};
 
-			mat = XMMatrixIdentity();
+			//quad->Draw(mat);
+			transform.Calclation();
+			quad->Draw(transform.GetWorldMatrix());
+
+			/*mat = XMMatrixIdentity();
 			mat *= XMMatrixRotationY(angle / 2.0f) * XMMatrixRotationX(angle / 1.0f);
 			mat *= DirectX::XMMatrixScaling(
 				std::fabsf(std::cosf(scalingAngle) * 2),
 				std::fabsf(std::cosf(scalingAngle) * 1),
 				std::fabsf(std::cosf(scalingAngle) * 3));
-			quad->Draw(mat);
+			quad->Draw(mat);*/
 
-			const Vector2Int imageSize{ pSprite->GetSize() };
+			transform = {};
+
+			transform.rotate_ = { angle / 1.0f, angle / 2.0f, 0.0f };
+			transform.scale_ =
+			{
+				std::fabsf(std::cosf(scalingAngle) * 2),
+				std::fabsf(std::cosf(scalingAngle) * 1),
+				std::fabsf(std::cosf(scalingAngle) * 3),
+			};
+			transform.Calclation();
+			quad->Draw(transform.GetWorldMatrix());
+
 			pSprite->Draw(
-				{ 0, 0, (Direct3D::ScreenSize() / 2) },
+				RectanInt{ 0, 0, (Direct3D::ScreenSize() / 2) },
 				angle,
+				RectanInt
 				{
-					static_cast<int>(std::fabsf(std::sinf(angle)) * (imageSize.x / 2)),
-					static_cast<int>(std::fabsf(std::sinf(angle)) * (imageSize.y / 2)),
+					static_cast<int>(pickPos.x),  // std::fabsf(std::sinf(angle)) * 
+					static_cast<int>(pickPos.y),  // std::fabsf(std::sinf(angle)) * 
 					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
 					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
 				});

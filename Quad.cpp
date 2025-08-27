@@ -140,7 +140,8 @@ void Quad::Draw(const DirectX::XMMATRIX& _worldMatrix, const DirectX::XMMATRIX& 
 	static float angle{ XM_1DIVPI };
 	angle += 0.001f;
 	angle = std::fmodf(angle, XM_2PI);
-	cb.lightDir = { std::cosf(angle), 0.5, -0.7, 0};
+	cb.lightDir = { std::cosf(angle), 0.5, -0.7, 0 };
+	cb.lightColor = { std::cosf(angle), std::cosf(angle / XM_PIDIV2), std::cosf(angle / XM_PIDIV4) };
 	/*XMMatrixTranspose(_worldMatrix);
 	cb.matRotateW.r[0].m128_f32[0] = 0.0;
 	cb.matRotateW.r[0].m128_f32[1] = 0.0;

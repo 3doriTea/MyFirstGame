@@ -17,6 +17,7 @@ cbuffer global
 	float4x4 matW;
 	float4x4 matRotateW;
 	float4 lightDir;  // ライトの向き
+	float4 lightColor;  // ライトの向き
     float ambientValue;  // 環境光の量
 };
 
@@ -71,5 +72,11 @@ float4 PS(VS_OUT inData) : SV_Target
     float4 ambient = textureColor * float4(ambientValue, ambientValue, ambientValue, 1);
 	float4 diffuse = textureColor * inData.color;
 	
-	return diffuse + ambient;
+    diffuse = saturate(diffuse * (lightColor + float4(1, 1, 1, 1)));
+	float4 color = diffuse + ambient;
+    //color.a = fwidth(color.a); // MEMO: お遊び abs(ddx(color)) + abs(ddy(color))
+    //float4 d = ddx(color) * 1;
+    //color += float4(d.xyz, 1);
+    return color;
+
 }

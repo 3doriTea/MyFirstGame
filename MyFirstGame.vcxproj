@@ -137,6 +137,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="MyFirstGame.h" />
     <ClInclude Include="Quad.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Sprite2D.h" />
@@ -151,6 +152,7 @@
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Sprite2D.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyFirstGame.rc" />

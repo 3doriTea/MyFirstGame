@@ -15,6 +15,7 @@ private:
 		DirectX::XMMATRIX matW;  // ワールド行列
 		DirectX::XMMATRIX matRotateW;  // 法線用の行列
 		DirectX::XMVECTOR lightDir;  // 平行光線の向きベクトル
+		DirectX::XMVECTOR lightColor;  // 平行光線の色
 		float ambientValue;  // 環境光の明るさ
 	};
 	struct Vertex
