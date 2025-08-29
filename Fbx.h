@@ -4,6 +4,7 @@
 #include <fbxsdk.h>
 #include <string>
 #include "Transform.h"
+#include "Texture.h"
 
 #pragma comment(lib, "LibFbxSDK-MD.lib")
 #pragma comment(lib, "LibXml2-MD.lib")
@@ -22,6 +23,11 @@ public:
 	void InitConstant();
 
 private:
+	struct MATERIAL
+	{
+		Texture* pTexture;
+	};
+
 	struct CONSTANT_BUFFER
 	{
 		XMMATRIX matWVP;
@@ -33,12 +39,14 @@ private:
 		XMVECTOR position;
 	};
 
-	int vertexCount_;	//頂点数
-	int polygonCount_;	//ポリゴン数
+	int vertexCount_;	// 頂点数
+	int polygonCount_;	// ポリゴン数
+	int materialCount_;  // マテリアルの個数
 
 	ID3D11Buffer* pVertexBuffer_;
 	ID3D11Buffer* pIndexBuffer_;
 	ID3D11Buffer* pConstantBuffer_;
+	MATERIAL* pMaterialList_;
 
 	VERTEX* pVertexes_;
 	int* pIndexes_;
