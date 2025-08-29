@@ -15,6 +15,7 @@
 #include "Quad.h"
 #include "Cube.h"
 #include "Sprite2D.h"
+#include "Fbx.h"
 
 HWND hWnd{ nullptr };
 
@@ -86,12 +87,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Cube* quad{ new Cube{} };
 	hResult = quad->Initialize();
 
+
 	if (FAILED(hResult))
 	{
 		SAFE_DELETE(quad);
 		Direct3D::Release();
 		return FALSE;
 	}
+
+	Fbx odenModel{};
+	hResult = odenModel.Load("Assets/Oden.fbx");
+	
+	if (FAILED(hResult))
+	{
+		SAFE_DELETE(quad);
+		Direct3D::Release();
+		return FALSE;
+	}
+
 
 	Sprite2D* pSprite{ new Sprite2D{} };
 	hResult = pSprite->Initialize("Sushi512x512.png");
@@ -151,7 +164,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			//quad->Draw(mat);
 			transform.Calculation();
-			quad->Draw(transform.GetWorldMatrix());
+			
+			//quad->Draw(transform.GetWorldMatrix());
 
 			/*mat = XMMatrixIdentity();
 			mat *= XMMatrixRotationY(angle / 2.0f) * XMMatrixRotationX(angle / 1.0f);
@@ -171,18 +185,25 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				std::fabsf(std::cosf(scalingAngle) * 3),
 			};
 			transform.Calculation();
-			quad->Draw(transform.GetWorldMatrix());
 
-			pSprite->Draw(
-				RectanInt{ 0, 0, (Direct3D::ScreenSize() / 2) },
-				angle,
-				RectanInt
-				{
-					static_cast<int>(pickPos.x),  // std::fabsf(std::sinf(angle)) * 
-					static_cast<int>(pickPos.y),  // std::fabsf(std::sinf(angle)) * 
-					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
-					static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
-				});
+			transform = {};
+			transform.position_ = { 0, -10, 20 };
+			transform.rotate_ = { 0, DirectX::XMConvertToRadians(45), 0 };
+			transform.Calculation();
+
+			odenModel.Draw(transform);
+			//quad->Draw(transform.GetWorldMatrix());
+
+			//pSprite->Draw(
+			//	RectanInt{ 0, 0, (Direct3D::ScreenSize() / 2) },
+			//	angle,
+			//	RectanInt
+			//	{
+			//		static_cast<int>(pickPos.x),  // std::fabsf(std::sinf(angle)) * 
+			//		static_cast<int>(pickPos.y),  // std::fabsf(std::sinf(angle)) * 
+			//		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
+			//		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
+			//	});
 
 			Direct3D::Instance().EndDraw();
 			//描画処理

@@ -32,12 +32,14 @@ class Direct3D final
 	friend class Quad;
 	friend class Sprite2D;
 	friend class Texture;
+	friend class Fbx;
 
 public:
 	enum ShaderType
 	{
 		SHADER_3D,  // 3Dシェーダ
 		SHADER_2D,  // 2Dシェーダ
+		SHADER_FBX,  // Fbx
 		SHADER_MAX,  // シェーダの種類数
 	};
 
@@ -63,6 +65,7 @@ public:
 
 	HRESULT InitializeShader3D();
 	HRESULT InitializeShader2D();
+	HRESULT InitializeShaderFbx();
 
 	/// <summary>
 	/// 描画開始

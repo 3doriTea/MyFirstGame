@@ -1,4 +1,6 @@
 #include "Fbx.h"
+#include "Direct3D.h"
+#include "Camera.h"
 
 Fbx::Fbx() :
 	vertexCount_{ 0 },
@@ -28,11 +30,17 @@ HRESULT Fbx::Load(std::string fileName)
 	FbxNode* pNode = rootNode->GetChild(0);
 	FbxMesh* mesh = pNode->GetMesh();
 
+
 	//各情報の個数を取得
 
 	vertexCount_ = mesh->GetControlPointsCount();	//頂点の数
 
 	polygonCount_ = mesh->GetPolygonCount();	//ポリゴンの数
+
+	InitVertex(mesh);
+	InitIndex(mesh);
+	InitConstant();
+
 
 
 	//マネージャ解放
@@ -42,6 +50,39 @@ HRESULT Fbx::Load(std::string fileName)
 
 void Fbx::Draw(Transform& transform)
 {
+	Direct3D::SetShader(Direct3D::SHADER_FBX);
+
+#pragma region コンスタントバッファに渡す情報
+	CONSTANT_BUFFER cb{};
+	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+#pragma endregion
+
+#pragma region コンスタントバッファの送信
+	D3D11_MAPPED_SUBRESOURCE pdata{};
+	Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+
+	Direct3D::Instance().pContext_->Unmap(pConstantBuffer_, 0);	//再開
+#pragma endregion
+
+#pragma region 諸々セット
+	//頂点バッファ
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	Direct3D::Instance().pContext_->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+
+	// インデックスバッファーをセット
+	stride = sizeof(int);
+	offset = 0;
+	Direct3D::Instance().pContext_->IASetIndexBuffer(pIndexBuffer_, DXGI_FORMAT_R32_UINT, 0);
+
+	// コンスタントバッファ
+	Direct3D::Instance().pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
+	Direct3D::Instance().pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
+#pragma endregion
+
+	// 実際に描画
+	Direct3D::Instance().pContext_->DrawIndexed(polygonCount_ * 3, 0, 0);
 }
 
 void Fbx::Release()
@@ -50,7 +91,7 @@ void Fbx::Release()
 
 void Fbx::InitVertex(FbxMesh* mesh)
 {
-	VERTEX* vertexes{ new VERTEX[vertexCount_]{} };
+	VERTEX* vertices{ new VERTEX[vertexCount_]{} };
 
 	for (int64_t poly = 0; poly < polygonCount_; poly++)
 	{
@@ -59,15 +100,95 @@ void Fbx::InitVertex(FbxMesh* mesh)
 			int index{ mesh->GetPolygonVertex(poly, vertex) };
 
 			FbxVector4 pos{ mesh->GetControlPointAt(index) };
-			vertexes[index].position =
+			vertices[index].position =
 				XMVectorSet(static_cast<float>(pos[0]), static_cast<float>(pos[1]), static_cast<float>(pos[2]), 0.0f);
 		}
 	}
+
+#pragma region 頂点バッファを作成
+
+	// 頂点データ用バッファの設定
+	D3D11_BUFFER_DESC bd_vertex{};
+	//bd_vertex.ByteWidth = sizeof(vertices);  // 型の大きさ
+	bd_vertex.ByteWidth = sizeof(VERTEX) * vertexCount_;  // 型の大きさ
+	bd_vertex.Usage = D3D11_USAGE_DEFAULT;
+	bd_vertex.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bd_vertex.CPUAccessFlags = 0;
+	bd_vertex.MiscFlags = 0;
+	bd_vertex.StructureByteStride = 0;
+	D3D11_SUBRESOURCE_DATA data_vertex{};
+	data_vertex.pSysMem = vertices;
+	HRESULT hResult = Direct3D::Instance().pDevice_->CreateBuffer(&bd_vertex, &data_vertex, &pVertexBuffer_);
+
+	//assert(SUCCEEDED(hResult) && "頂点バッファの作成に失敗 @Quad::Initialize");
+
+	if (FAILED(hResult))
+	{
+		MessageBox(nullptr, L"頂点バッファの作成に失敗しました", L"エラー", MB_OK);
+		//return hResult;
+	}
+#pragma endregion
 }
 
 void Fbx::InitIndex(FbxMesh* mesh)
 {
-	int64_t* index{ new int64_t[polygonCount_ * 3] };
+	int* index{ new int[polygonCount_ * 3] };
+	int count{ 0 };
 
+	for (int poly = 0; poly < polygonCount_; poly++)
+	{
+		for (int vertex = 0; vertex < 3; vertex++)
+		{
+			index[count] = mesh->GetPolygonVertex(poly, vertex);
+			count++;
+		}
+	}
 
+#pragma region インデックスバッファを作成
+	// インデックスバッファを生成する
+	D3D11_BUFFER_DESC bd{};
+	bd.Usage = D3D11_USAGE_DEFAULT;
+	bd.ByteWidth = sizeof(int) * polygonCount_ * 3;
+	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bd.CPUAccessFlags = 0;
+	bd.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA initData{};
+	initData.pSysMem = index;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+	HRESULT hResult = Direct3D::Instance().pDevice_->CreateBuffer(&bd, &initData, &pIndexBuffer_);
+
+	//assert(SUCCEEDED(hResult) && "インデックスバッファの作成に失敗 @Quad::Initialize");
+
+	if (FAILED(hResult))
+	{
+		MessageBox(nullptr, L"インデックスバッファの作成に失敗しました", L"エラー", MB_OK);
+		//return hResult;
+	}
+#pragma endregion
+}
+
+void Fbx::InitConstant()
+{
+#pragma region コンスタントバッファの作成
+	//コンスタントバッファ作成
+	D3D11_BUFFER_DESC cb{};
+	cb.ByteWidth = sizeof(CONSTANT_BUFFER);
+	cb.Usage = D3D11_USAGE_DYNAMIC;
+	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cb.MiscFlags = 0;
+	cb.StructureByteStride = 0;
+
+	// コンスタントバッファの作成
+	HRESULT hResult = Direct3D::Instance().pDevice_->CreateBuffer(&cb, nullptr, &pConstantBuffer_);
+
+	//assert(SUCCEEDED(hResult) && "コンスタントバッファの作成に失敗 @Quad::Initialize");
+
+	if (FAILED(hResult))
+	{
+		MessageBox(nullptr, L"コンスタントバッファの作成に失敗しました", L"エラー", MB_OK);
+	}
+#pragma endregion
 }
