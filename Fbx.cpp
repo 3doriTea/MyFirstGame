@@ -67,6 +67,53 @@ HRESULT Fbx::Load(std::string fileName)
 
 void Fbx::Draw(Transform& transform)
 {
+#if 1
+	//Quadをアレンジ
+	Direct3D::SetShader(Direct3D::SHADER_FBX);
+	transform.Calculation();
+
+	CONSTANT_BUFFER cb{};
+	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+	cb.matNormal = XMMatrixIdentity();
+
+	D3D11_MAPPED_SUBRESOURCE pdata;
+	Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+
+	Direct3D::Instance().pContext_->Unmap(pConstantBuffer_, 0);	//再開
+
+	//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
+	//頂点バッファ
+	UINT stride = sizeof(VERTEX);
+	UINT offset = 0;
+	Direct3D::Instance().pContext_->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
+
+	for (int i = 0; i < materialCount_; i++)
+	{
+
+		// インデックスバッファーをセット
+		stride = sizeof(int);
+		offset = 0;
+		Direct3D::Instance().pContext_->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
+
+		//コンスタントバッファ
+		Direct3D::Instance().pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
+		Direct3D::Instance().pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
+
+
+		if (materials_[i].pTexture)
+		{
+			ID3D11SamplerState* pSampler = materials_[i].pTexture->GetSampler();
+			Direct3D::Instance().pContext_->PSSetSamplers(0, 1, &pSampler);
+
+			ID3D11ShaderResourceView* pSRV = materials_[i].pTexture->GetSRV();
+			Direct3D::Instance().pContext_->PSSetShaderResources(0, 1, &pSRV);
+		}
+
+		//描画
+		Direct3D::Instance().pContext_->DrawIndexed(polygonCount_ * 3, 0, 0);
+	}
+#else
 	//Direct3D::SetShader(Direct3D::SHADER_FBX);
 	Direct3D::SetShader(Direct3D::SHADER_FBX);
 
@@ -118,6 +165,7 @@ void Fbx::Draw(Transform& transform)
 		// 実際に描画
 		Direct3D::Instance().pContext_->DrawIndexed(polygonCount_ * 3, 0, 0);
 	}
+#endif
 }
 
 void Fbx::Release()

@@ -96,7 +96,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	Fbx odenModel{};
-	hResult = odenModel.Load("Assets/Oden.fbx");
+	hResult = odenModel.Load("Oden2.fbx");
 	
 	if (FAILED(hResult))
 	{

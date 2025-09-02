@@ -372,6 +372,77 @@ HRESULT Direct3D::InitializeShader2D()
 
 HRESULT Direct3D::InitializeShaderFbx()
 {
+#if 1
+
+	HRESULT hr;
+
+
+	// 頂点シェーダの作成（コンパイル）
+	ID3DBlob* pCompileVS = nullptr;
+	D3DCompileFromFile(L"FbxModel.hlsl", nullptr, nullptr, "VS", "vs_5_0", NULL, 0, &pCompileVS, NULL);
+	assert(pCompileVS != nullptr);
+
+
+	hr = pDevice_->CreateVertexShader(pCompileVS->GetBufferPointer(),
+		pCompileVS->GetBufferSize(), NULL, &(shaders_[SHADER_FBX].pVertexShader));
+
+	if (FAILED(hr))
+	{
+		MessageBox(nullptr, L"頂点シェーダの作成の作成に失敗しました", L"エラー", MB_OK);
+		return hr;
+	}
+
+
+
+	// ピクセルシェーダの作成（コンパイル）
+	ID3DBlob* pCompilePS = nullptr;
+	D3DCompileFromFile(L"FbxModel.hlsl", nullptr, nullptr, "PS", "ps_5_0", NULL, 0, &pCompilePS, NULL);
+	assert(pCompilePS != nullptr);
+	hr = pDevice_->CreatePixelShader(pCompilePS->GetBufferPointer(),
+		pCompilePS->GetBufferSize(), NULL, &(shaders_[SHADER_FBX].pPixelShader));
+
+	if (FAILED(hr))
+	{
+		MessageBox(nullptr, L"ピクセルシェーダの作成の作成に失敗しました", L"エラー", MB_OK);
+		return hr;
+	}
+
+	//頂点インプットレイアウト
+	D3D11_INPUT_ELEMENT_DESC layout[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },	//位置
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,  sizeof(DirectX::XMFLOAT4), D3D11_INPUT_PER_VERTEX_DATA, 0 },//UV座標
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(DirectX::XMFLOAT4) + sizeof(DirectX::XMFLOAT2), D3D11_INPUT_PER_VERTEX_DATA, 0 } //法線ベクトル
+	};
+
+	hr = pDevice_->CreateInputLayout(layout, 3, pCompileVS->GetBufferPointer(),
+		pCompileVS->GetBufferSize(), &(shaders_[SHADER_FBX].pVertexLayout));
+
+	if (FAILED(hr))
+	{
+		MessageBox(nullptr, L"頂点インプットレイアウトの作成の作成に失敗しました", L"エラー", MB_OK);
+		return hr;
+	}
+
+
+	pCompileVS->Release();
+	pCompilePS->Release();
+	//ラスタライザ作成
+	D3D11_RASTERIZER_DESC rdc = {};
+	rdc.CullMode = D3D11_CULL_BACK;
+	rdc.FillMode = D3D11_FILL_SOLID;
+	rdc.FrontCounterClockwise = FALSE;
+	pDevice_->CreateRasterizerState(&rdc, &(shaders_[SHADER_FBX].pRasterizerState));
+
+	//それぞれをデバイスコンテキストにセット
+	//pContext->VSSetShader(pVertexShader, NULL, 0);	//頂点シェーダー
+	//pContext->PSSetShader(pPixelShader, NULL, 0);	//ピクセルシェーダー
+	//pContext->IASetInputLayout(pVertexLayout);	//頂点インプットレイアウト
+	//pContext->RSSetState(pRasterizerState);		//ラスタライザー
+
+
+	return S_OK;
+
+#else
 	HRESULT hResult{};
 #pragma region 頂点シェーダの作成（コンパイル）
 	ID3DBlob* pCompileVS{ nullptr };  // Viewで見ないとわからないメモリの塊
@@ -475,6 +546,7 @@ HRESULT Direct3D::InitializeShaderFbx()
 #pragma endregion
 
 	return S_OK;  // 問題なし
+#endif
 }
 
 void Direct3D::BeginDraw()
