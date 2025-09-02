@@ -3,8 +3,8 @@
 //───────────────────────────────────────
 // テクスチャ＆サンプラーデータのグローバル変数定義
 //───────────────────────────────────────
-//Texture2D g_texture : register(t0); //テクスチャー
-//SamplerState g_sampler : register(s0); //サンプラー
+Texture2D g_texture : register(t0); //テクスチャー
+SamplerState g_sampler : register(s0); //サンプラー
 
 //───────────────────────────────────────
 // コンスタントバッファ
@@ -36,7 +36,9 @@ struct VS_OUT
 // 頂点シェーダ
 //───────────────────────────────────────
 VS_OUT VS(
-	float4 pos : POSITION
+	float4 pos : POSITION,
+	float4 normal : NORMAL,
+	float4 uv : TEXCOORD
 )  // 2個ポジションがあれば POSITION0 POSITION1 とか
 	//float4 normal : NORMAL,
 	//float4 uv : TEXCOORD
@@ -69,5 +71,12 @@ VS_OUT VS(
 float4 PS(VS_OUT inData) : SV_Target
 {
     return float4(0, 0, 1, 1);
-
+    
+    float4 textureColor = g_texture.Sample(g_sampler, inData.uv.xy);
+    //float4 ambient = textureColor * float4(ambientValue, ambientValue, ambientValue, 1);
+    float4 diffuse = textureColor * inData.color;
+	
+    //diffuse = saturate(diffuse * (lightColor + float4(1, 1, 1, 1)));
+    diffuse = saturate(diffuse);
+    float4 color = diffuse; // + ; //ambient;
 }

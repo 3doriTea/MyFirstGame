@@ -1,6 +1,10 @@
 #include "Fbx.h"
 #include "Direct3D.h"
 #include "Camera.h"
+#include <cstdint>
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 Fbx::Fbx() :
 	vertexCount_{ 0 },
@@ -9,6 +13,11 @@ Fbx::Fbx() :
 	pIndexBuffer_{ nullptr },
 	pConstantBuffer_{ nullptr }
 {
+}
+
+Fbx::~Fbx()
+{
+	Release();
 }
 
 HRESULT Fbx::Load(std::string fileName)
@@ -25,23 +34,23 @@ HRESULT Fbx::Load(std::string fileName)
 	fbxImporter->Import(pFbxScene);
 	fbxImporter->Destroy();
 
-	//メッシュ情報を取得
+	// ノードはfbxでのメッシュが入っているやつ
+
+	// メッシュ情報を取得
 	FbxNode* rootNode = pFbxScene->GetRootNode();
 	FbxNode* pNode = rootNode->GetChild(0);
 	FbxMesh* mesh = pNode->GetMesh();
 
+	// 各情報の個数を取得
 
-	//各情報の個数を取得
-
-	vertexCount_ = mesh->GetControlPointsCount();	//頂点の数
-
-	polygonCount_ = mesh->GetPolygonCount();	//ポリゴンの数
+	vertexCount_ = mesh->GetControlPointsCount();  // 頂点の数
+	polygonCount_ = mesh->GetPolygonCount();       // ポリゴンの数
+	materialCount_ = pNode->GetMaterialCount();    // マテリアル数
 
 	InitVertex(mesh);
 	InitIndex(mesh);
 	InitConstant();
-
-
+	InitMaterial(pNode);
 
 	//マネージャ解放
 	pFbxManager->Destroy();
@@ -87,6 +96,10 @@ void Fbx::Draw(Transform& transform)
 
 void Fbx::Release()
 {
+	for (auto& material : materials_)
+	{
+		SAFE_DELETE(material.pTexture);
+	}
 }
 
 void Fbx::InitVertex(FbxMesh* mesh)
@@ -191,4 +204,43 @@ void Fbx::InitConstant()
 		MessageBox(nullptr, L"コンスタントバッファの作成に失敗しました", L"エラー", MB_OK);
 	}
 #pragma endregion
+}
+
+void Fbx::InitMaterial(FbxNode* _pNode)
+{
+	materials_.resize(materialCount_);
+
+	for (int i = 0; i < materialCount_; i++)
+	{
+		FbxSurfaceMaterial* pMaterial{ _pNode->GetMaterial(i) };
+
+		FbxProperty fbxProperty{ pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse) };
+		int fileTextureCount{ fbxProperty.GetSrcObjectCount<FbxFileTexture>() };
+
+		if (fileTextureCount > 0)
+		{
+			FbxFileTexture* pTextureInfo{ fbxProperty.GetSrcObject<FbxFileTexture>(0) };
+			const char* textureFileName{ pTextureInfo->GetRelativeFileName() };
+
+			fs::path tPath{ textureFileName };
+
+			// fs::exists より fs::is_regular_file のほうがいい
+			//if (fs::is_regular_file(tPath))
+			if (fs::exists(tPath))
+			{
+				// テクスチャの読み込み
+				materials_[i].pTexture = new Texture{};
+				materials_[i].pTexture->Load(textureFileName);
+			}
+			else
+			{
+				// テクスチャの読み込みできない
+
+			}
+		}
+		else
+		{
+			materials_[i].pTexture = nullptr;
+		}
+	}
 }

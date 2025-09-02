@@ -6,10 +6,6 @@ using namespace DirectX;
 //位置、向き、拡大率などを管理するクラス
 class Transform
 {
-	XMMATRIX matTranslate_;	//移動行列
-	XMMATRIX matRotate_;	//回転行列	
-	XMMATRIX matScale_;	//拡大行列
-
 public:
 	XMFLOAT3 position_;	//位置
 	XMFLOAT3 rotate_;	//向き
@@ -26,4 +22,15 @@ public:
 
 	//ワールド行列を取得
 	XMMATRIX GetWorldMatrix() const;
+
+	/// <summary>
+	/// 法線のワールド行列を取得する
+	/// </summary>
+	/// <returns>法線の行列</returns>
+	XMMATRIX GetNormalMatrix() const;
+
+private:
+	XMMATRIX matTranslate_;  // 移動行列
+	XMMATRIX matRotate_;     // 回転行列
+	XMMATRIX matScale_;      // 拡大行列
 };
