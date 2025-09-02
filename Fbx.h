@@ -34,8 +34,13 @@ private:
 
 	struct CONSTANT_BUFFER
 	{
-		XMMATRIX matWVP;
-		XMMATRIX matNormal;
+		DirectX::XMMATRIX matWVP;  // スクリーン空間のやつ
+		DirectX::XMMATRIX textureMatrix;  // テクスチャのマトリクス
+		DirectX::XMMATRIX matW;  // ワールド行列
+		DirectX::XMMATRIX matRotateW;  // 法線用の行列
+		DirectX::XMVECTOR lightDir;  // 平行光線の向きベクトル
+		DirectX::XMVECTOR lightColor;  // 平行光線の色
+		float ambientValue;  // 環境光の明るさ
 	};
 
 	struct VERTEX
@@ -49,7 +54,9 @@ private:
 	int materialCount_;  // マテリアルの個数
 
 	ID3D11Buffer* pVertexBuffer_;
-	ID3D11Buffer* pIndexBuffer_;
+	//ID3D11Buffer* pIndexBuffer_;
+	// インデックスバッファは各マテリアル分だけ用意する
+	ID3D11Buffer** pIndexBuffer_;
 	ID3D11Buffer* pConstantBuffer_;
 	std::vector<MATERIAL> materials_;  // マテリアルず
 
