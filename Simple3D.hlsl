@@ -77,6 +77,6 @@ float4 PS(VS_OUT inData) : SV_Target
     //color.a = fwidth(color.a); // MEMO: ‚¨—V‚Ñ abs(ddx(color)) + abs(ddy(color))
     //float4 d = ddx(color) * 1;
     //color += float4(d.xyz, 1);
-    return color;
+    return g_texture.Sample(g_sampler, inData.uv.xy);
 
 }

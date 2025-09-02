@@ -376,7 +376,6 @@ HRESULT Direct3D::InitializeShaderFbx()
 #pragma region 頂点シェーダの作成（コンパイル）
 	ID3DBlob* pCompileVS{ nullptr };  // Viewで見ないとわからないメモリの塊
 	hResult = D3DCompileFromFile(L"FbxModel.hlsl", nullptr, nullptr, "VS", "vs_5_0", NULL, 0, &pCompileVS, NULL);
-
 	assert(pCompileVS != nullptr);
 	/*assert(SUCCEEDED(hResult)
 		&& "頂点シェーダコンパイルに失敗 Direct3D::InitializeShader");*/
@@ -402,9 +401,9 @@ HRESULT Direct3D::InitializeShaderFbx()
 #pragma region 頂点インプットレイアウト
 	D3D11_INPUT_ELEMENT_DESC layout[]
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },  // 位置
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },  // UV座標
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32 , D3D11_INPUT_PER_VERTEX_DATA, 0 },  // 法線
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },	//位置
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,  sizeof(DirectX::XMFLOAT4), D3D11_INPUT_PER_VERTEX_DATA, 0 },//UV座標
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(DirectX::XMFLOAT4) + sizeof(DirectX::XMFLOAT2), D3D11_INPUT_PER_VERTEX_DATA, 0 } //法線ベクトル
 	};
 
 	hResult = pDevice_->CreateInputLayout(

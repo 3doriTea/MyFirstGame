@@ -68,11 +68,12 @@ HRESULT Fbx::Load(std::string fileName)
 void Fbx::Draw(Transform& transform)
 {
 	//Direct3D::SetShader(Direct3D::SHADER_FBX);
-	Direct3D::SetShader(Direct3D::SHADER_3D);
+	Direct3D::SetShader(Direct3D::SHADER_FBX);
 
 #pragma region コンスタントバッファに渡す情報
 	CONSTANT_BUFFER cb{};
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
+	cb.matRotateW = XMMatrixIdentity();
 #pragma endregion
 
 #pragma region コンスタントバッファの送信
@@ -89,30 +90,28 @@ void Fbx::Draw(Transform& transform)
 	UINT offset = 0;
 	Direct3D::Instance().pContext_->IASetVertexBuffers(0, 1, &pVertexBuffer_, &stride, &offset);
 
-	// コンスタントバッファ
-	Direct3D::Instance().pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
-	Direct3D::Instance().pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
-
-
 	// インデックスバッファーをセット
 	stride = sizeof(int);
 	offset = 0;
 	for (int i = 0; i < materialCount_; i++)
 	{
-		if (!materials_[i].pTexture)
+		stride = sizeof(int);
+		offset = 0;
+		Direct3D::Instance().pContext_->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
+
+		// コンスタントバッファ
+		Direct3D::Instance().pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
+		Direct3D::Instance().pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
+
+		if (materials_[i].pTexture)
 		{
-			continue;
+			ID3D11SamplerState* pSampler = materials_[i].pTexture->GetSampler();
+			Direct3D::Instance().pContext_->PSSetSamplers(0, 1, &pSampler);
+
+			ID3D11ShaderResourceView* pSRV = materials_[i].pTexture->GetSRV();
+			Direct3D::Instance().pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
 
-		ID3D11SamplerState* pSampler = materials_[i].pTexture->GetSampler();
-
-		Direct3D::Instance().pContext_->PSSetSamplers(0, 1, &pSampler);
-
-		ID3D11ShaderResourceView* pSRV = materials_[i].pTexture->GetSRV();
-
-		Direct3D::Instance().pContext_->PSSetShaderResources(0, 1, &pSRV);
-
-		Direct3D::Instance().pContext_->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, i);
 
 #pragma endregion
 
@@ -137,11 +136,12 @@ void Fbx::InitVertex(FbxMesh* mesh)
 	{
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
+			enum { X, Y, Z };
 			int index{ mesh->GetPolygonVertex(poly, vertex) };
 
 			FbxVector4 pos{ mesh->GetControlPointAt(index) };
 			vertices[index].position =
-				XMVectorSet(static_cast<float>(pos[0]), static_cast<float>(pos[1]), static_cast<float>(pos[2]), 0.0f);
+				XMVectorSet(static_cast<float>(pos[X]), static_cast<float>(pos[Y]), static_cast<float>(pos[Z]), 0.0f);
 		
 			//頂点のUV
 			FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
