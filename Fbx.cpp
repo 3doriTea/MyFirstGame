@@ -180,22 +180,53 @@ void Fbx::InitVertex(FbxMesh* mesh)
 {
 	VERTEX* vertices{ new VERTEX[vertexCount_]{} };
 
+	//’¸“_‚ÌUV
+	FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
+
+	FbxLayerElement::EMappingMode mappingMode{ pUV->GetMappingMode() };
+	FbxLayerElement::EReferenceMode referenceMode{ pUV->GetReferenceMode() };
+
 	for (int64_t poly = 0; poly < polygonCount_; poly++)
 	{
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
 			enum { X, Y, Z };
+			enum { U, V };
+			
 			int index{ mesh->GetPolygonVertex(poly, vertex) };
-
+			
 			FbxVector4 pos{ mesh->GetControlPointAt(index) };
 			vertices[index].position =
 				XMVectorSet(static_cast<float>(pos[X]), static_cast<float>(pos[Y]), static_cast<float>(pos[Z]), 0.0f);
-		
-			//’¸“_‚ÌUV
-			FbxLayerElementUV* pUV = mesh->GetLayer(0)->GetUVs();
-			int uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
-			FbxVector2  uv = pUV->GetDirectArray().GetAt(uvIndex);
-			enum { U, V };
+
+			int uvIndex{};
+			FbxVector2 uv = pUV->GetDirectArray().GetAt(uvIndex);
+
+			// MappingMode‚Å•ªŠò
+			if (mappingMode == FbxLayerElement::EMappingMode::eByPolygonVertex)
+			{
+				uvIndex = mesh->GetTextureUVIndex(poly, vertex, FbxLayerElement::eTextureDiffuse);
+			}
+			else if (mappingMode == FbxLayerElement::eByControlPoint)
+			{
+				uvIndex = index;
+			}
+			else
+			{
+				uv = { 0, 0 };
+			}
+
+			// ReferenceMode‚Å•ªŠò
+			if (referenceMode == FbxLayerElement::eDirect)
+			{
+				uv = pUV->GetDirectArray().GetAt(uvIndex);
+			}
+			else if (referenceMode == FbxLayerElement::eIndexToDirect)
+			{
+				int realIndex{ pUV->GetIndexArray().GetAt(uvIndex) };
+				uv = pUV->GetDirectArray().GetAt(realIndex);
+			}
+			
 			// UV‚Ìc•ûŒü‚ÌŠî€‚ª‹t‚É‚È‚é‚©‚çUV‚ª‹t
 			vertices[index].uv = XMVectorSet((float)uv.mData[U], (float)(1.0f - uv.mData[V]), 0.0f, 0.0f);
 		}
