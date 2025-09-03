@@ -2,9 +2,11 @@
 #include "Direct3D.h"
 #include "Camera.h"
 #include <cstdint>
+// #include <string>
 #include <filesystem>
 #include <cassert>
 
+// ファイルシステムの名前空間付け
 namespace fs = std::filesystem;
 
 Fbx::Fbx() :
@@ -23,6 +25,12 @@ Fbx::~Fbx()
 
 HRESULT Fbx::Load(std::string fileName)
 {
+	fs::path current{ fs::current_path() };
+	fs::path subPath{ "./Assets" };
+	/*wchar_t currDir[MAX_PATH]{};
+	GetCurrentDirectory(MAX_PATH, currDir);*/
+	fs::current_path(subPath);
+
 	//マネージャを生成
 	FbxManager* pFbxManager = FbxManager::Create();
 
@@ -47,10 +55,11 @@ HRESULT Fbx::Load(std::string fileName)
 	vertexCount_ = mesh->GetControlPointsCount();  // 頂点の数
 	polygonCount_ = mesh->GetPolygonCount();       // ポリゴンの数
 	materialCount_ = pNode->GetMaterialCount();    // マテリアル数
+	
+	
+	//BOOL succeed{ SetCurrentDirectory(subPath.c_str()) };  // Assetsフォルダを基準に読み込む
 
-	wchar_t currDir[MAX_PATH]{};
-	GetCurrentDirectory(MAX_PATH, currDir);
-	SetCurrentDirectory(L"./Assets");
+	//assert(succeed && "カレントディレクトの移動に失敗 @Fbx::Load");
 
 	InitVertex(mesh);
 	InitIndex(mesh);
@@ -60,7 +69,8 @@ HRESULT Fbx::Load(std::string fileName)
 	//マネージャ解放
 	pFbxManager->Destroy();
 
-	SetCurrentDirectory(currDir);
+	fs::current_path(current);
+	//SetCurrentDirectory(current.c_str());
 	
 	return S_OK;
 }
@@ -74,7 +84,7 @@ void Fbx::Draw(Transform& transform)
 
 	CONSTANT_BUFFER cb{};
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-	cb.matNormal = XMMatrixIdentity();
+	cb.matNormal = transform.GetNormalMatrix();
 
 	D3D11_MAPPED_SUBRESOURCE pdata;
 	Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
@@ -229,6 +239,17 @@ void Fbx::InitVertex(FbxMesh* mesh)
 			
 			// UVの縦方向の基準が逆になるからUVが逆
 			vertices[index].uv = XMVectorSet((float)uv.mData[U], (float)(1.0f - uv.mData[V]), 0.0f, 0.0f);
+
+			// 頂点の法線
+			FbxVector4 normal{};
+			mesh->GetPolygonVertexNormal(poly, vertex, normal);
+			vertices[index].normal =
+			{
+				static_cast<float>(normal[X]),
+				static_cast<float>(normal[Y]),
+				static_cast<float>(normal[Z]),
+				0.0f
+			};
 		}
 	}
 

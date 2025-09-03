@@ -30,6 +30,7 @@ private:
 	struct MATERIAL
 	{
 		Texture* pTexture;
+		XMFLOAT4 diffuse;
 	};
 
 	struct CONSTANT_BUFFER
@@ -41,14 +42,20 @@ private:
 		//DirectX::XMVECTOR lightDir;  // 平行光線の向きベクトル
 		//DirectX::XMVECTOR lightColor;  // 平行光線の色
 		//float ambientValue;  // 環境光の明るさ
-		XMMATRIX	matWVP;
-		XMMATRIX	matNormal;
+		XMMATRIX matWVP;
+		XMMATRIX matNormal;
+		XMFLOAT4 diffuse;
+		//XMINT4 materialFlag;
+		//XMFLOAT4 materialFlag;
+		BOOL materialFLag;  // 16byte単位で送られるから仕方ない
+
 	};
 
 	struct VERTEX
 	{
 		XMVECTOR position;
 		XMVECTOR uv;
+		XMVECTOR normal;  // 法線
 	};
 
 	int vertexCount_;	// 頂点数

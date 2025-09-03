@@ -101,5 +101,8 @@ private:
 	ID3D11DeviceContext* pContext_{ nullptr };              // デバイスコンテキスト
 	IDXGISwapChain* pSwapChain_{ nullptr };                 // スワップチェイン
 	ID3D11RenderTargetView* pRenderTargetView_{ nullptr };  // レンダーターゲットビュー
-	ShaderBundle shaders_[SHADER_MAX]{};
+	ShaderBundle shaders_[SHADER_MAX]{};                    // シェーダにバンドル
+
+	ID3D11Texture2D* pDepthStencil_;             // 深度ステンシル
+	ID3D11DepthStencilView* pDepthStencilView_;  // 深度ステンシルビュー
 };

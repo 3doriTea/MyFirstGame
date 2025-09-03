@@ -177,19 +177,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			transform = {};
 
-			transform.rotate_ = { angle / 1.0f, angle / 2.0f, 0.0f };
-			transform.scale_ =
+			transform.rotate_ = { 0.0f, angle / 2.0f, 0.0f };
+			/*transform.scale_ =
 			{
 				std::fabsf(std::cosf(scalingAngle) * 2),
 				std::fabsf(std::cosf(scalingAngle) * 1),
 				std::fabsf(std::cosf(scalingAngle) * 3),
-			};
+			};*/
 			transform.Calculation();
 
-			transform = {};
+			/*transform = {};
 			transform.position_ = { 0, -10, 20 };
 			transform.rotate_ = { 0, DirectX::XMConvertToRadians(45), 0 };
-			transform.Calculation();
+			transform.Calculation();*/
 
 			odenModel.Draw(transform);
 			//quad->Draw(transform.GetWorldMatrix());
