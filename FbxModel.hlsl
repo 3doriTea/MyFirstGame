@@ -65,7 +65,7 @@ float4 PS(VS_OUT inData) : SV_Target
     }
     else
     {
-        color = g_texture.Sample(g_sampler, inData.uv);
+        color = inData.color;
     }
     //return float4(1, 1, 0, 1);
     //float4 color = g_texture.Sample(g_sampler, inData.uv); // * inData.color; //テクスチャーから色を取得

@@ -68,6 +68,7 @@ private:
 	ID3D11Buffer** pIndexBuffer_;
 	ID3D11Buffer* pConstantBuffer_;
 	std::vector<MATERIAL> materials_;  // マテリアルず
+	std::vector<int> indexCount_;  // マテリアルごとのインデックス数
 
 	VERTEX* pVertexes_;
 	int* pIndexes_;

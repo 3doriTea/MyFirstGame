@@ -86,11 +86,11 @@ void Fbx::Draw(Transform& transform)
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
 	cb.matNormal = transform.GetNormalMatrix();
 
-	D3D11_MAPPED_SUBRESOURCE pdata;
-	Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
-	memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));	// データを値を送る
+	//D3D11_MAPPED_SUBRESOURCE pdata;
+	//Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+	//memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));  // データを値を送る
 
-	Direct3D::Instance().pContext_->Unmap(pConstantBuffer_, 0);	//再開
+	//Direct3D::Instance().pContext_->Unmap(pConstantBuffer_, 0);	//再開
 
 	//頂点バッファ、インデックスバッファ、コンスタントバッファをパイプラインにセット
 	//頂点バッファ
@@ -100,16 +100,17 @@ void Fbx::Draw(Transform& transform)
 
 	for (int i = 0; i < materialCount_; i++)
 	{
+		cb.diffuse = materials_[i].diffuse;
+		cb.materialFLag = materials_[i].pTexture == nullptr ? 0 : 1;//UINT32_MAX;
 
-		// インデックスバッファーをセット
+		// インデックスバッファをセット
 		stride = sizeof(int);
 		offset = 0;
 		Direct3D::Instance().pContext_->IASetIndexBuffer(pIndexBuffer_[i], DXGI_FORMAT_R32_UINT, 0);
 
-		//コンスタントバッファ
+		//コンスタントバッファをセット
 		Direct3D::Instance().pContext_->VSSetConstantBuffers(0, 1, &pConstantBuffer_);	//頂点シェーダー用	
 		Direct3D::Instance().pContext_->PSSetConstantBuffers(0, 1, &pConstantBuffer_);	//ピクセルシェーダー用
-
 
 		if (materials_[i].pTexture)
 		{
@@ -120,8 +121,16 @@ void Fbx::Draw(Transform& transform)
 			Direct3D::Instance().pContext_->PSSetShaderResources(0, 1, &pSRV);
 		}
 
-		//描画
-		Direct3D::Instance().pContext_->DrawIndexed(polygonCount_ * 3, 0, 0);
+#pragma region コンスタントバッファを送信
+		D3D11_MAPPED_SUBRESOURCE pdata;
+		Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
+		memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));  // データを値を送る
+
+		Direct3D::Instance().pContext_->Unmap(pConstantBuffer_, 0);	//再開
+#pragma endregion
+
+		// 描画
+		Direct3D::Instance().pContext_->DrawIndexed(indexCount_[i] * 3, 0, 0);
 	}
 #else
 	//Direct3D::SetShader(Direct3D::SHADER_FBX);
@@ -196,7 +205,7 @@ void Fbx::InitVertex(FbxMesh* mesh)
 	FbxLayerElement::EMappingMode mappingMode{ pUV->GetMappingMode() };
 	FbxLayerElement::EReferenceMode referenceMode{ pUV->GetReferenceMode() };
 
-	for (int64_t poly = 0; poly < polygonCount_; poly++)
+	for (int poly = 0; poly < polygonCount_; poly++)
 	{
 		for (int vertex = 0; vertex < 3; vertex++)
 		{
@@ -282,6 +291,8 @@ void Fbx::InitIndex(FbxMesh* mesh)
 {
 	pIndexBuffer_ = new ID3D11Buffer*[materialCount_];  // マテリアルの分だけ作る
 
+	indexCount_.resize(materialCount_);
+
 	int* index{ new int[polygonCount_ * 3] };
 
 	for (int i = 0; i < materialCount_; i++)
@@ -302,6 +313,8 @@ void Fbx::InitIndex(FbxMesh* mesh)
 				}
 			}
 		}
+
+		indexCount_[i] = count;
 
 #pragma region インデックスバッファを作成
 		// インデックスバッファを生成する
@@ -355,6 +368,8 @@ void Fbx::InitConstant()
 
 void Fbx::InitMaterial(FbxNode* _pNode)
 {
+	enum { R, G, B };
+
 	materials_.resize(materialCount_);
 
 	for (int i = 0; i < materialCount_; i++)
@@ -362,6 +377,8 @@ void Fbx::InitMaterial(FbxNode* _pNode)
 		FbxSurfaceMaterial* pMaterial{ _pNode->GetMaterial(i) };
 
 		FbxProperty fbxProperty{ pMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse) };
+
+#pragma region テクスチャ関係
 		int fileTextureCount{ fbxProperty.GetSrcObjectCount<FbxFileTexture>() };
 
 		if (fileTextureCount > 0)
@@ -386,10 +403,33 @@ void Fbx::InitMaterial(FbxNode* _pNode)
 				// テクスチャの読み込みできない
 				assert(false && "ファイルがない");
 			}
+
+			materials_[i].diffuse = { 1.0f, 0.0f, 1.0f, 1.0f };
 		}
 		else
 		{
 			materials_[i].pTexture = nullptr;
+
+			if (pMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId))
+			{
+
+			}
+			else
+			{
+				assert(false && "ランバートシェーダ以外は対応していません。");
+			}
+
+			pMaterial->FindProperty(FbxSurfaceLambert::sDiffuse)
+
+			FbxDouble3 color{ reinterpret_cast<FbxSurfaceLambert*>(pMaterial)->Diffuse.Get() };
+			materials_[i].diffuse =
+			{
+				static_cast<float>(color[R]),
+				static_cast<float>(color[G]),
+				static_cast<float>(color[B]),
+				1.0f,
+			};
 		}
+#pragma endregion
 	}
 }

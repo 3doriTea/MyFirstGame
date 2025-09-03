@@ -415,7 +415,7 @@ HRESULT Direct3D::InitializeShaderFbx()
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(DirectX::XMFLOAT4) + sizeof(DirectX::XMFLOAT2), D3D11_INPUT_PER_VERTEX_DATA, 0 } //法線ベクトル
 	};
 
-	hr = pDevice_->CreateInputLayout(layout, 3, pCompileVS->GetBufferPointer(),
+	hr = pDevice_->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), pCompileVS->GetBufferPointer(),
 		pCompileVS->GetBufferSize(), &(shaders_[SHADER_FBX].pVertexLayout));
 
 	if (FAILED(hr))
