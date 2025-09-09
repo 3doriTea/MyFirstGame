@@ -81,6 +81,37 @@ HRESULT Direct3D::Initialize(const int winW, const int winH, HWND hWnd)
 	//一時的にバックバッファを取得しただけなので解放
 	pBackBuffer->Release();
 
+	///////////////////////////深度ステンシルビューの作成///////////////////////////
+
+	const D3D11_TEXTURE2D_DESC DEPTH_DESC
+	{
+		.Width  = static_cast<UINT>(winW),
+		.Height = static_cast<UINT>(winH),
+		.MipLevels = 1,
+		.ArraySize = 1,
+		.Format = DXGI_FORMAT_D32_FLOAT,
+		.SampleDesc
+		{
+			.Count = 1,
+			.Quality = 0,
+		},
+		.Usage = D3D11_USAGE_DEFAULT,
+		.BindFlags = D3D11_BIND_DEPTH_STENCIL,
+		.CPUAccessFlags = 0,
+		.MiscFlags = 0,
+	};
+
+	hResult = pDevice_->CreateTexture2D(&DEPTH_DESC, nullptr, &pDepthStencil_);
+	assert(SUCCEEDED(hResult) && "深度ステンシルの作成に失敗");
+
+	if (pDepthStencil_ == nullptr)
+	{
+		MessageBox(nullptr, L"深度バッファの取得に失敗しました", L"エラー", MB_OK);
+		return hResult;
+	}
+
+	pDevice_->CreateDepthStencilView(pDepthStencil_, nullptr, &pDepthStencilView_);
+
 	///////////////////////////ビューポート（描画範囲）設定///////////////////////////////
 	//レンダリング結果を表示する範囲
 	D3D11_VIEWPORT vp{};
@@ -99,7 +130,7 @@ HRESULT Direct3D::Initialize(const int winW, const int winH, HWND hWnd)
 	pContext_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);  // データの入力種類を指定
 	// MEMO: レンダーターゲットビューを描画用に使ってください
 	//     : 何個かで合体して使うことがある
-	pContext_->OMSetRenderTargets(1, &pRenderTargetView_, nullptr);            // 描画先を設定
+	pContext_->OMSetRenderTargets(1, &pRenderTargetView_, pDepthStencilView_);            // 描画先を設定
 	// 上で決めたビューポートを設定する
 	pContext_->RSSetViewports(1, &vp);
 
@@ -411,8 +442,8 @@ HRESULT Direct3D::InitializeShaderFbx()
 	D3D11_INPUT_ELEMENT_DESC layout[]
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0,  D3D11_INPUT_PER_VERTEX_DATA, 0 },	//位置
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0,  sizeof(DirectX::XMFLOAT4), D3D11_INPUT_PER_VERTEX_DATA, 0 },//UV座標
-		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, sizeof(DirectX::XMFLOAT4) + sizeof(DirectX::XMFLOAT2), D3D11_INPUT_PER_VERTEX_DATA, 0 } //法線ベクトル
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },//UV座標
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 }, //法線ベクトル
 	};
 
 	hr = pDevice_->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), pCompileVS->GetBufferPointer(),
@@ -557,6 +588,8 @@ void Direct3D::BeginDraw()
 
 	// 画面をクリア
 	pContext_->ClearRenderTargetView(pRenderTargetView_, clearColor);
+
+	pContext_->ClearDepthStencilView(pDepthStencilView_, D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
 }
 
 void Direct3D::EndDraw()

@@ -5,6 +5,7 @@
 // #include <string>
 #include <filesystem>
 #include <cassert>
+#include <format>
 
 // ファイルシステムの名前空間付け
 namespace fs = std::filesystem;
@@ -84,7 +85,7 @@ void Fbx::Draw(Transform& transform)
 
 	CONSTANT_BUFFER cb{};
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-	cb.matNormal = transform.GetNormalMatrix();
+	cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());//XMMatrixIdentity();
 
 	//D3D11_MAPPED_SUBRESOURCE pdata;
 	//Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
@@ -130,7 +131,7 @@ void Fbx::Draw(Transform& transform)
 #pragma endregion
 
 		// 描画
-		Direct3D::Instance().pContext_->DrawIndexed(indexCount_[i] * 3, 0, 0);
+		Direct3D::Instance().pContext_->DrawIndexed(indexCount_[i], 0, 0);
 	}
 #else
 	//Direct3D::SetShader(Direct3D::SHADER_FBX);
@@ -259,6 +260,14 @@ void Fbx::InitVertex(FbxMesh* mesh)
 				static_cast<float>(normal[Z]),
 				0.0f
 			};
+
+			OutputDebugString(std::format(
+				L"i={}({}, {}, {})\n",
+				index,
+				vertices[index].normal.m128_f32[X],
+				vertices[index].normal.m128_f32[Y],
+				vertices[index].normal.m128_f32[Z]
+				).c_str());
 		}
 	}
 
@@ -419,7 +428,7 @@ void Fbx::InitMaterial(FbxNode* _pNode)
 				assert(false && "ランバートシェーダ以外は対応していません。");
 			}
 
-			pMaterial->FindProperty(FbxSurfaceLambert::sDiffuse)
+			pMaterial->FindProperty(FbxSurfaceLambert::sDiffuse);
 
 			FbxDouble3 color{ reinterpret_cast<FbxSurfaceLambert*>(pMaterial)->Diffuse.Get() };
 			materials_[i].diffuse =

@@ -21,8 +21,8 @@ private:
 	struct Vertex
 	{
 		DirectX::XMVECTOR pos;  // 位置
-		DirectX::XMVECTOR normal;  // 法線
 		DirectX::XMVECTOR uv;  // UV座標
+		DirectX::XMVECTOR normal;  // 法線
 	};
 
 public:
