@@ -16,6 +16,7 @@
 #include "Cube.h"
 #include "Sprite2D.h"
 #include "Fbx.h"
+#include "Input.h"
 
 HWND hWnd{ nullptr };
 
@@ -74,6 +75,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	Input::Initialize(hWnd);
 	Camera::Initialize();
 
 	MSG msg{};
@@ -125,13 +127,24 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else  //メッセージなし
 		{
+			Input::Update();
+
 			Camera::Update();  // カメラ更新のタイミングはここが望ましい!!
+
+			if (Input::IsKeyUp(DIK_ESCAPE))
+			{
+				static int count{ 0 };
+				count++;
+				if (count >= 3)
+				{
+					PostQuitMessage(0);
+				}
+			}
 
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
 
 			//描画処理
-
 			static float angle{};
 			const Vector2Int imageSize{ pSprite->GetSize() };
 			static Vector2Int pickPos{ (imageSize.x / 2), (imageSize.y / 2) };
@@ -430,6 +443,10 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_INITDIALOG:
 		return (INT_PTR)TRUE;
+
+	case WM_MOUSEMOVE:
+		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
+		return 0;
 
 	case WM_COMMAND:
 		if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)

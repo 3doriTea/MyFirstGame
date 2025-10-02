@@ -77,6 +77,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h">
@@ -116,6 +119,9 @@
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>

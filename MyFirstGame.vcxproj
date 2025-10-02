@@ -148,6 +148,7 @@
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="Fbx.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Input.h" />
     <ClInclude Include="MyFirstGame.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="Transform.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="Fbx.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="MyFirstGame.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="Sprite2D.cpp" />
