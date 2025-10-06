@@ -18,6 +18,9 @@ namespace Input
 	bool IsButton(int button);
 	bool IsButtonUp(int button);
 	bool IsButtonDown(int button);
+	bool IsMouseButton(int button);
+	bool IsMouseButtonUp(int button);
+	bool IsMouseButtonDown(int button);
 
 	DirectX::XMVECTOR GetMousePosition();
 	void SetMousePosition(const int x, const int y);

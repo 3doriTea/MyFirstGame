@@ -1,6 +1,8 @@
 #include "Input.h"
 #include "Xinput.h"
 
+#include <format>
+
 #pragma comment(lib, "Xinput.lib")
 
 using DirectX::XMVECTOR;
@@ -30,8 +32,8 @@ namespace Input
 		pKeyDevice->SetDataFormat(&c_dfDIKeyboard);
 		pKeyDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
 
-		pDInput->CreateDevice(GUID_SysKeyboard, &mouseDevice, nullptr);
-		mouseDevice->SetDataFormat(&c_dfDIKeyboard);
+		pDInput->CreateDevice(GUID_SysMouse, &mouseDevice, nullptr);
+		mouseDevice->SetDataFormat(&c_dfDIMouse);
 		mouseDevice->SetCooperativeLevel(hWnd, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
 	}
 
@@ -39,11 +41,23 @@ namespace Input
 	{
 		memcpy(keyStatePrev, keyState, sizeof(keyState));
 		memcpy(&controllerStatePrev_, &controllerState_, sizeof(controllerState_));
+		memcpy(&mouseStatePrev, &mouseState, sizeof(mouseState));
 
 		pKeyDevice->Acquire();
 		pKeyDevice->GetDeviceState(sizeof(keyState), &keyState);
 
+		mouseDevice->Acquire();
+		mouseDevice->GetDeviceState(sizeof(mouseState), &mouseState);
+
 		XInputGetState(0, &controllerState_);
+
+		OutputDebugString(std::format(
+			L"{}, {}, {}, {}\n",
+			mouseState.rgbButtons[0],
+			mouseState.rgbButtons[1],
+			mouseState.rgbButtons[2],
+			mouseState.rgbButtons[3]
+			).c_str());
 	}
 
 	bool IsKey(int keyCode)
@@ -96,6 +110,33 @@ namespace Input
 	{
 		if (!(controllerState_.Gamepad.wButtons & button)
 			&& (controllerStatePrev_.Gamepad.wButtons & button))
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool IsMouseButton(int button)
+	{
+		if (mouseState.rgbButtons[button])
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool IsMouseButtonUp(int button)
+	{
+		if (mouseState.rgbButtons[button] && !mouseStatePrev.rgbButtons[button])
+		{
+			return true;
+		}
+		return false;
+	}
+
+	bool IsMouseButtonDown(int button)
+	{
+		if (!mouseState.rgbButtons[button] && mouseStatePrev.rgbButtons[button])
 		{
 			return true;
 		}

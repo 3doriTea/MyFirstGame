@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "MyFirstGame.h"
 #include <thread>
+#include <format>
 #include <cassert>
 #include <chrono>
 
@@ -131,7 +132,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			Camera::Update();  // カメラ更新のタイミングはここが望ましい!!
 
-			if (Input::IsKeyUp(DIK_ESCAPE))
+
+
+			if (Input::IsKeyUp(DIK_ESCAPE) || Input::IsMouseButtonDown(0x00))
 			{
 				static int count{ 0 };
 				count++;
@@ -140,6 +143,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 					PostQuitMessage(0);
 				}
 			}
+
+			//DirectX::XMVECTOR pos{ Input::GetMousePosition() };
+			//OutputDebugString(std::format(L"x:{}, y:{}\n", pos.m128_f32[0], pos.m128_f32[1]).c_str());
 
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
@@ -429,6 +435,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//}
 		PostQuitMessage(0);
 		break;
+	case WM_MOUSEMOVE:
+		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
+		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
