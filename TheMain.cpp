@@ -1,8 +1,8 @@
-﻿// MyFirstGame.cpp : アプリケーションのエントリ ポイントを定義します。
+﻿// TheMain.cpp : アプリケーションのエントリ ポイントを定義します。
 //
 
 #include "framework.h"
-#include "MyFirstGame.h"
+#include "TheMain.h"
 #include <thread>
 #include <format>
 #include <cassert>

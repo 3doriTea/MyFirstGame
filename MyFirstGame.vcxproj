@@ -148,7 +148,7 @@
     <ClInclude Include="Engine\Fbx.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Engine\Input.h" />
-    <ClInclude Include="MyFirstGame.h" />
+    <ClInclude Include="TheMain.h" />
     <ClInclude Include="Engine\Quad.h" />
     <ClInclude Include="Engine\Transform.h" />
     <ClInclude Include="Engine\Utility.h" />
@@ -162,7 +162,7 @@
     <ClCompile Include="Engine\Direct3D.cpp" />
     <ClCompile Include="Engine\Fbx.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
-    <ClCompile Include="MyFirstGame.cpp" />
+    <ClCompile Include="TheMain.cpp" />
     <ClCompile Include="Engine\Quad.cpp" />
     <ClCompile Include="Engine\Sprite2D.cpp" />
     <ClCompile Include="Engine\Texture.cpp" />

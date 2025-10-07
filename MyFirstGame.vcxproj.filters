@@ -21,6 +21,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{798101b9-e667-4902-8b3d-a7c94e040656}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyFirstGame.rc">
@@ -51,72 +54,72 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Camera.cpp">
-      <Filter>Cプラ ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Direct3D.cpp">
-      <Filter>Cプラ ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Fbx.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="MyFirstGame.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Quad.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Sprite2D.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Texture.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Transform.cpp">
-      <Filter>Cプラ ファイル</Filter>
+      <Filter>Engine</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Input.cpp">
-      <Filter>Cプラ ファイル</Filter>
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="TheMain.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Quad.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Sprite2D.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Texture.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Transform.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\Camera.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Direct3D.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Fbx.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="MyFirstGame.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Quad.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Transform.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Utility.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Sprite2D.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Texture.h">
-      <Filter>Cプラ ファイル</Filter>
+    <ClInclude Include="Engine\Camera.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Direct3D.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Fbx.h">
+      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Input.h">
-      <Filter>Cプラ ファイル</Filter>
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="TheMain.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Quad.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Sprite2D.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Texture.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Transform.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Utility.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
