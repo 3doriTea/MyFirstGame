@@ -50,48 +50,42 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp">
+    <ClCompile Include="Engine\Camera.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Cube.cpp">
+    <ClCompile Include="Engine\Direct3D.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Direct3D.cpp">
-      <Filter>Cプラ ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Fbx.cpp">
+    <ClCompile Include="Engine\Fbx.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
     <ClCompile Include="MyFirstGame.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Quad.cpp">
+    <ClCompile Include="Engine\Quad.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite2D.cpp">
+    <ClCompile Include="Engine\Sprite2D.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
+    <ClCompile Include="Engine\Texture.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
+    <ClCompile Include="Engine\Transform.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="Engine\Input.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h">
+    <ClInclude Include="Engine\Camera.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
+    <ClInclude Include="Engine\Direct3D.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Direct3D.h">
-      <Filter>Cプラ ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Fbx.h">
+    <ClInclude Include="Engine\Fbx.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
@@ -100,28 +94,28 @@
     <ClInclude Include="MyFirstGame.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Quad.h">
+    <ClInclude Include="Engine\Quad.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Transform.h">
+    <ClInclude Include="Engine\Transform.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Utility.h">
+    <ClInclude Include="Engine\Utility.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite2D.h">
+    <ClInclude Include="Engine\Sprite2D.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
+    <ClInclude Include="Engine\Texture.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="Engine\Input.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>

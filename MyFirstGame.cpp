@@ -8,16 +8,16 @@
 #include <cassert>
 #include <chrono>
 
-#include "Direct3D.h"
+#include "Engine/Direct3D.h"
 
-#include "Transform.h"
+#include "Engine/Transform.h"
 
-#include "Camera.h"
-#include "Quad.h"
-#include "Cube.h"
-#include "Sprite2D.h"
-#include "Fbx.h"
-#include "Input.h"
+#include "Engine/Camera.h"
+#include "Engine/Quad.h"
+//#include "Engine/Cube.h"
+#include "Engine/Sprite2D.h"
+#include "Engine/Fbx.h"
+#include "Engine/Input.h"
 
 HWND hWnd{ nullptr };
 
@@ -87,7 +87,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		`DispatchMessage`でWindowプロシージャを実行し、メッセージを送りつける。
 	*/
 
-	Cube* quad{ new Cube{} };
+	/*Cube* quad{ new Cube{} };
 	hResult = quad->Initialize();
 
 
@@ -96,21 +96,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		SAFE_DELETE(quad);
 		Direct3D::Release();
 		return FALSE;
-	}
+	}*/
 
 	Fbx odenModel{};
 	hResult = odenModel.Load("Oden.fbx");
 	
 	if (FAILED(hResult))
 	{
-		SAFE_DELETE(quad);
 		Direct3D::Release();
 		return FALSE;
 	}
 
 
 	Sprite2D* pSprite{ new Sprite2D{} };
-	hResult = pSprite->Initialize("Sushi512x512.png");
+	hResult = pSprite->Initialize("Assets/Sushi512x512.png");
 
 	if (FAILED(hResult))
 	{
@@ -234,8 +233,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	SAFE_RELEASE(pSprite);
 	SAFE_DELETE(pSprite);
 
-	SAFE_RELEASE(quad);
-	SAFE_DELETE(quad);
+	/*SAFE_RELEASE(quad);
+	SAFE_DELETE(quad);*/
 
 	Direct3D::Release();
 
