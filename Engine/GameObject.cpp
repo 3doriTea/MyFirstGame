@@ -14,3 +14,13 @@ GameObject::GameObject(GameObject* _pParent, const std::string& _name) :
 GameObject::~GameObject()
 {
 }
+
+void GameObject::DrawSub()
+{
+	this->Draw();
+
+	for (auto pChild : childList_)
+	{
+		pChild->DrawSub();
+	}
+}

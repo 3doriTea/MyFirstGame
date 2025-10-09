@@ -86,6 +86,12 @@
     <ClCompile Include="Engine\RootJob.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="PlayScene.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -132,6 +138,12 @@
     </ClInclude>
     <ClInclude Include="Engine\RootJob.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayScene.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

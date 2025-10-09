@@ -3,6 +3,7 @@
 #include <list>
 #include <string>
 #include "Transform.h"
+#include "Input.h"
 
 class GameObject
 {
@@ -14,9 +15,12 @@ public:
 	virtual void Initialize() {}
 	virtual void Update() {}
 	virtual void Release() {}
-	virtual void Draw() const {}
+	virtual void Draw() {}
 
-private:
+public:
+	void DrawSub();  // このオブジェクトを描画する処理
+
+protected:
 	std::list<GameObject*> childList_;  // 子のリスト
 	Transform transform_;  // 座標系
 	GameObject* pParent_;  // 親のゲームオブジェクトポインタ

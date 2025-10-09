@@ -90,6 +90,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		`DispatchMessage`でWindowプロシージャを実行し、メッセージを送りつける。
 	*/
 
+
+#pragma region 過去の遺物おでん
 	/*Cube* quad{ new Cube{} };
 	hResult = quad->Initialize();
 
@@ -101,7 +103,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}*/
 
-	Fbx odenModel{};
+	/*Fbx odenModel{};
 	hResult = odenModel.Load("Oden.fbx");
 	
 	if (FAILED(hResult))
@@ -119,7 +121,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		SAFE_DELETE(pSprite);
 		Direct3D::Release();
 		return FALSE;
-	}
+	}*/
+#pragma endregion
 
 	// 一番親のゲームオブジェクト
 	pRootJob = new RootJob{ nullptr };
@@ -158,7 +161,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
 
-			pRootJob->Draw();
+			pRootJob->DrawSub();
 
 			// TODO: pRootJobの子を全て描画
 
@@ -244,11 +247,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	}
 
 	SAFE_RELEASE(pRootJob);
-	SAFE_RELEASE(pSprite);
-	SAFE_DELETE(pSprite);
+
+	#pragma region 過去の遺物おでん
+	/*SAFE_RELEASE(pSprite);
+	SAFE_DELETE(pSprite);*/
 
 	/*SAFE_RELEASE(quad);
 	SAFE_DELETE(quad);*/
+	#pragma endregion
 
 	Direct3D::Release();
 
