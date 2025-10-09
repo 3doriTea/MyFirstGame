@@ -19,6 +19,8 @@
 #include "Engine/Fbx.h"
 #include "Engine/Input.h"
 
+#include "Engine/RootJob.h"
+
 HWND hWnd{ nullptr };
 
 #define MAX_LOADSTRING 100
@@ -33,6 +35,7 @@ HINSTANCE hInst;                                // 現在のインターフェ�
 WCHAR szTitle[MAX_LOADSTRING];                  // タイトル バーのテキスト
 WCHAR szWindowClass[MAX_LOADSTRING];            // メイン ウィンドウ クラス名
 
+RootJob* pRootJob{ nullptr };
 
 // このコード モジュールに含まれる関数の宣言を転送します:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -118,6 +121,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return FALSE;
 	}
 
+	// 一番親のゲームオブジェクト
+	pRootJob = new RootJob{ nullptr };
+	pRootJob->Initialize();
+
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))  //メッセージあり
@@ -131,7 +138,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			Camera::Update();  // カメラ更新のタイミングはここが望ましい!!
 
-
+			pRootJob->Update();
 
 			if (Input::IsKeyUp(DIK_ESCAPE) || Input::IsMouseButtonDown(0x00))
 			{
@@ -146,90 +153,97 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//DirectX::XMVECTOR pos{ Input::GetMousePosition() };
 			//OutputDebugString(std::format(L"x:{}, y:{}\n", pos.m128_f32[0], pos.m128_f32[1]).c_str());
 
+
+
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
 
-			//描画処理
-			static float angle{};
-			const Vector2Int imageSize{ pSprite->GetSize() };
-			static Vector2Int pickPos{ (imageSize.x / 2), (imageSize.y / 2) };
-			
-			angle += XMConvertToRadians(0.1f);
-			if (angle > XM_2PI * 2.0f)
-			{
-				angle -= XM_2PI * 2.0f;
-				auto getRand
-				{
-					[]() -> float { return std::rand() / static_cast<float>(RAND_MAX); }
-				};
+			pRootJob->Draw();
 
-				pickPos = { static_cast<int>(getRand() * imageSize.x), static_cast<int>(getRand() * imageSize.y) };
-			}
+			// TODO: pRootJobの子を全て描画
 
-			Transform transform{};
+#pragma region 過去の異物おでん
+			////描画処理
+			//static float angle{};
+			//const Vector2Int imageSize{ pSprite->GetSize() };
+			//static Vector2Int pickPos{ (imageSize.x / 2), (imageSize.y / 2) };
+			//
+			//angle += XMConvertToRadians(0.1f);
+			//if (angle > XM_2PI * 2.0f)
+			//{
+			//	angle -= XM_2PI * 2.0f;
+			//	auto getRand
+			//	{
+			//		[]() -> float { return std::rand() / static_cast<float>(RAND_MAX); }
+			//	};
 
-			//XMMATRIX mat{};
-			transform.rotate_ = { angle, angle / 2.0f, 0.0f };
-			//mat *= XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
-			float scalingAngle{ angle };
-			scalingAngle = 0.1f;
-			transform.scale_ =
-			{
-				std::fabsf(std::cosf(scalingAngle) * 4),
-				std::fabsf(std::cosf(scalingAngle) * 3),
-				std::fabsf(std::cosf(scalingAngle) * 2),
-			};
+			//	pickPos = { static_cast<int>(getRand() * imageSize.x), static_cast<int>(getRand() * imageSize.y) };
+			//}
 
-			//quad->Draw(mat);
-			transform.Calculation();
-			
-			//quad->Draw(transform.GetWorldMatrix());
+			//Transform transform{};
 
-			/*mat = XMMatrixIdentity();
-			mat *= XMMatrixRotationY(angle / 2.0f) * XMMatrixRotationX(angle / 1.0f);
-			mat *= DirectX::XMMatrixScaling(
-				std::fabsf(std::cosf(scalingAngle) * 2),
-				std::fabsf(std::cosf(scalingAngle) * 1),
-				std::fabsf(std::cosf(scalingAngle) * 3));
-			quad->Draw(mat);*/
+			////XMMATRIX mat{};
+			//transform.rotate_ = { angle, angle / 2.0f, 0.0f };
+			////mat *= XMMatrixRotationY(angle) * XMMatrixRotationX(angle / 2.0f);
+			//float scalingAngle{ angle };
+			//scalingAngle = 0.1f;
+			//transform.scale_ =
+			//{
+			//	std::fabsf(std::cosf(scalingAngle) * 4),
+			//	std::fabsf(std::cosf(scalingAngle) * 3),
+			//	std::fabsf(std::cosf(scalingAngle) * 2),
+			//};
 
-			transform = {};
-
-			transform.rotate_ = { 0.0f, angle / 2.0f, 0.0f };
-			/*transform.scale_ =
-			{
-				std::fabsf(std::cosf(scalingAngle) * 2),
-				std::fabsf(std::cosf(scalingAngle) * 1),
-				std::fabsf(std::cosf(scalingAngle) * 3),
-			};*/
+			////quad->Draw(mat);
 			//transform.Calculation();
+			//
+			////quad->Draw(transform.GetWorldMatrix());
+
+			///*mat = XMMatrixIdentity();
+			//mat *= XMMatrixRotationY(angle / 2.0f) * XMMatrixRotationX(angle / 1.0f);
+			//mat *= DirectX::XMMatrixScaling(
+			//	std::fabsf(std::cosf(scalingAngle) * 2),
+			//	std::fabsf(std::cosf(scalingAngle) * 1),
+			//	std::fabsf(std::cosf(scalingAngle) * 3));
+			//quad->Draw(mat);*/
 
 			//transform = {};
-			transform.position_ = { 0, -10, 20 };
-			// transform.rotate_ = { 0, DirectX::XMConvertToRadians(45), 0 };
-			// transform.Calculation();
 
-			odenModel.Draw(transform);
-			//quad->Draw(transform.GetWorldMatrix());
+			//transform.rotate_ = { 0.0f, angle / 2.0f, 0.0f };
+			///*transform.scale_ =
+			//{
+			//	std::fabsf(std::cosf(scalingAngle) * 2),
+			//	std::fabsf(std::cosf(scalingAngle) * 1),
+			//	std::fabsf(std::cosf(scalingAngle) * 3),
+			//};*/
+			////transform.Calculation();
 
-			//pSprite->Draw(
-			//	RectanInt{ 0, 0, (Direct3D::ScreenSize() / 2) },
-			//	angle,
-			//	RectanInt
-			//	{
-			//		static_cast<int>(pickPos.x),  // std::fabsf(std::sinf(angle)) * 
-			//		static_cast<int>(pickPos.y),  // std::fabsf(std::sinf(angle)) * 
-			//		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
-			//		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
-			//	});
+			////transform = {};
+			//transform.position_ = { 0, -10, 20 };
+			//// transform.rotate_ = { 0, DirectX::XMConvertToRadians(45), 0 };
+			//// transform.Calculation();
+
+			//odenModel.Draw(transform);
+			////quad->Draw(transform.GetWorldMatrix());
+
+			////pSprite->Draw(
+			////	RectanInt{ 0, 0, (Direct3D::ScreenSize() / 2) },
+			////	angle,
+			////	RectanInt
+			////	{
+			////		static_cast<int>(pickPos.x),  // std::fabsf(std::sinf(angle)) * 
+			////		static_cast<int>(pickPos.y),  // std::fabsf(std::sinf(angle)) * 
+			////		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.x),
+			////		static_cast<int>(std::fabsf(std::cosf(angle)) * imageSize.y)
+			////	});
+			#pragma endregion
 
 			Direct3D::Instance().EndDraw();
 			//描画処理
-
 		}
-
 	}
 
+	SAFE_RELEASE(pRootJob);
 	SAFE_RELEASE(pSprite);
 	SAFE_DELETE(pSprite);
 
