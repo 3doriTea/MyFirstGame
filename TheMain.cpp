@@ -21,6 +21,8 @@
 
 #include "Engine/RootJob.h"
 
+#pragma comment(lib, "winmm.lib")
+
 HWND hWnd{ nullptr };
 
 #define MAX_LOADSTRING 100
@@ -137,6 +139,31 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else  //メッセージなし
 		{
+			//static long long int count{ 0 };
+			//SetWindowTextA(hWnd, std::format("Sample Game count:{}", count++).c_str());
+
+			static DWORD secPrevTime{ timeGetTime() };
+			static DWORD prevTime{ timeGetTime() };
+
+			DWORD currTime{ timeGetTime() };
+			static DWORD countFps{ 0 };
+
+			if ((currTime - prevTime) * 60 < 1000)
+			{
+				continue;
+			}
+			prevTime = currTime;
+
+			countFps++;
+			static DWORD fps{ 0u };
+			if (currTime - secPrevTime >= 1000)
+			{
+				secPrevTime = currTime;
+				fps = countFps;
+				countFps = 1;
+			}
+			SetWindowTextA(hWnd, std::format("FPS:{}, {}", fps, countFps, 1000.0f / (currTime - prevTime)).c_str());
+
 			Input::Update();
 
 			Camera::Update();  // カメラ更新のタイミングはここが望ましい!!
@@ -156,7 +183,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//DirectX::XMVECTOR pos{ Input::GetMousePosition() };
 			//OutputDebugString(std::format(L"x:{}, y:{}\n", pos.m128_f32[0], pos.m128_f32[1]).c_str());
 
-
+			pRootJob->UpdateSub();
 
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理

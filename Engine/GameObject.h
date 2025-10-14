@@ -27,6 +27,7 @@ public:
 
 public:
 	void DrawSub();  // このオブジェクトを描画する処理
+	void UpdateSub();  // このオブジェクトを更新する処理
 
 protected:
 	std::list<GameObject*> childList_{};  // 子のリスト
