@@ -130,6 +130,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	pRootJob = new RootJob{ nullptr };
 	pRootJob->Initialize();
 
+	timeBeginPeriod(1);
 	while (msg.message != WM_QUIT)
 	{
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))  //メッセージあり
@@ -189,9 +190,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//ゲームの処理
 
 			pRootJob->DrawSub();
-
-			// TODO: pRootJobの子を全て描画
-
 #pragma region 過去の異物おでん
 			////描画処理
 			//static float angle{};
@@ -272,8 +270,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//描画処理
 		}
 	}
+	timeEndPeriod(1);
 
-	SAFE_RELEASE(pRootJob);
+	if (pRootJob)
+	{
+		pRootJob->ReleaseSub();
+	}
+	//SAFE_RELEASE(pRootJob);
 
 	#pragma region 過去の遺物おでん
 	/*SAFE_RELEASE(pSprite);

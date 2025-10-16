@@ -33,3 +33,12 @@ void GameObject::UpdateSub()
 		pChild->UpdateSub();
 	}
 }
+
+void GameObject::ReleaseSub()
+{
+	for (auto pChild : childList_)
+	{
+		pChild->ReleaseSub();
+	}
+	this->Release();
+}

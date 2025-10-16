@@ -17,7 +17,8 @@ void PlayScene::Initialize()
 	pPlayer_->Initialize();]
 	*/
 
-	Instantiate<Player>(this);
+	GameObject* pPlayer = Instantiate<Player>(this);
+	Instantiate<Player>(pPlayer);
 }
 
 void PlayScene::Update()
