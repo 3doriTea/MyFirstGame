@@ -589,7 +589,7 @@ void Direct3D::BeginDraw()
 	// ‰æ–Ê‚ðƒNƒŠƒA
 	pContext_->ClearRenderTargetView(pRenderTargetView_, clearColor);
 
-	pContext_->ClearDepthStencilView(pDepthStencilView_, D3D11_CLEAR_DEPTH, 1.0f, 0.0f);
+	pContext_->ClearDepthStencilView(pDepthStencilView_, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void Direct3D::EndDraw()

@@ -22,13 +22,23 @@ public:
 	virtual void Release() {}
 	virtual void Draw() {}
 
-	template<GameObjectT T>
-	GameObject* Instantiate(GameObject* _pParent);
+	template<GameObjectT T, typename ...Arg>
+	T* Instantiate(GameObject* _pParent, Arg... _arg);
 
 public:
 	void DrawSub();  // このオブジェクトを描画する処理
 	void UpdateSub();  // このオブジェクトを更新する処理
 	void ReleaseSub(); // このオブジェクトを消す処理
+	bool ToDestroy() const { return status.toDestroy_; };  // このオブジェクトは破壊される予定か
+	void DestroyMe() { status.toDestroy_ = TRUE; }
+
+	Transform* GetTransform() { return &transform_; };
+
+private:
+	struct Status
+	{
+		uint8_t toDestroy_ = 0;
+	} status;
 
 protected:
 	std::list<GameObject*> childList_{};  // 子のリスト
@@ -37,10 +47,10 @@ protected:
 	std::string name_;  // オブジェクトの名前
 };
 
-template<GameObjectT T>
-inline GameObject* GameObject::Instantiate(GameObject* _pParent)
+template<GameObjectT T, typename ...Arg>
+inline T* GameObject::Instantiate(GameObject* _pParent, Arg... _arg)
 {
-	GameObject* pGameObject{ new T{ _pParent } };
+	T* pGameObject{ new T{ _pParent, _arg... } };
 	_pParent->childList_.push_back(pGameObject);
 	pGameObject->Initialize();
 

@@ -32,6 +32,20 @@ void GameObject::UpdateSub()
 	{
 		pChild->UpdateSub();
 	}
+
+	for (auto itr = childList_.begin(); itr != childList_.end();)
+	{
+		if ((*itr)->ToDestroy())
+		{
+			(*itr)->ReleaseSub();
+			delete (*itr);
+			itr = childList_.erase(itr);
+		}
+		else
+		{
+			itr++;
+		}
+	}
 }
 
 void GameObject::ReleaseSub()

@@ -25,6 +25,10 @@ void Player::Initialize()
 void Player::Update()
 {
 	transform_.rotate_.y += 0.01f;
+	if (transform_.rotate_.y > 2.0f)
+	{
+		DestroyMe();
+	}
 }
 
 void Player::Draw()

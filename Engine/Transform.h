@@ -29,8 +29,12 @@ public:
 	/// <returns>法線の行列</returns>
 	XMMATRIX GetNormalMatrix() const;
 
+	void SetParent(Transform* _pParent) { pParent_ = _pParent; }
+
 private:
 	XMMATRIX matTranslate_;  // 移動行列
 	XMMATRIX matRotate_;     // 回転行列
 	XMMATRIX matScale_;      // 拡大行列
+
+	Transform* pParent_;  // 親の座標系
 };

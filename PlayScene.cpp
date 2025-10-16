@@ -1,5 +1,6 @@
 #include "PlayScene.h"
 #include "Player.h"
+#include "ChildOden.h"
 
 PlayScene::PlayScene(GameObject* pParent)
 {
@@ -17,8 +18,9 @@ void PlayScene::Initialize()
 	pPlayer_->Initialize();]
 	*/
 
-	GameObject* pPlayer = Instantiate<Player>(this);
-	Instantiate<Player>(pPlayer);
+	Player* pPlayer = Instantiate<Player>(this);
+	Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, 3.5 });
+	Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, -3.5 });
 }
 
 void PlayScene::Update()

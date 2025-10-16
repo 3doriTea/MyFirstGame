@@ -6,7 +6,8 @@ Transform::Transform() :
 	scale_{ 1, 1, 1 },
 	matTranslate_{ XMMatrixIdentity() },
 	matRotate_{ XMMatrixIdentity() },
-	matScale_{ XMMatrixIdentity() }
+	matScale_{ XMMatrixIdentity() },
+	pParent_{ nullptr }
 {
 }
 
@@ -27,7 +28,14 @@ void Transform::Calculation()
 
 XMMATRIX Transform::GetWorldMatrix() const
 {
-	return matScale_ * matRotate_ * matTranslate_;
+	if (pParent_ != nullptr)
+	{
+		return matScale_ * matRotate_ * matTranslate_ * pParent_->GetWorldMatrix();
+	}
+	else
+	{
+		return matScale_ * matRotate_ * matTranslate_ ;
+	}
 }
 
 XMMATRIX Transform::GetNormalMatrix() const

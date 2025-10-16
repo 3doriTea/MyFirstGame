@@ -92,6 +92,9 @@
     <ClCompile Include="Player.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ChildOden.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -143,6 +146,9 @@
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ChildOden.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>
