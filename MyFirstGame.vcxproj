@@ -148,6 +148,7 @@
     <ClInclude Include="Engine\Direct3D.h" />
     <ClInclude Include="Engine\Fbx.h" />
     <ClInclude Include="Engine\GameObject.h" />
+    <ClInclude Include="Engine\Model.h" />
     <ClInclude Include="Engine\RootJob.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Engine\Input.h" />
@@ -169,6 +170,7 @@
     <ClCompile Include="Engine\Fbx.cpp" />
     <ClCompile Include="Engine\GameObject.cpp" />
     <ClCompile Include="Engine\Input.cpp" />
+    <ClCompile Include="Engine\Model.cpp" />
     <ClCompile Include="Engine\RootJob.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />

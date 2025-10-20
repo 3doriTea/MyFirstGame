@@ -95,6 +95,9 @@
     <ClCompile Include="ChildOden.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Model.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -150,6 +153,9 @@
     </ClInclude>
     <ClInclude Include="ChildOden.h">
       <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Model.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
