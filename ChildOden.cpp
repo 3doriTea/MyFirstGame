@@ -1,10 +1,10 @@
 #include "ChildOden.h"
-#include "Engine/Fbx.h"
+#include "Engine/Model.h"
 
 
 ChildOden::ChildOden(GameObject* _pParent, const DirectX::XMFLOAT3& _offset) :
 	GameObject{ _pParent, "Childen" },
-	pFbx_{ nullptr }
+	hModel_{ -1 }
 {
 	transform_.position_ = _offset;
 }
@@ -18,8 +18,10 @@ void ChildOden::Initialize()
 	transform_.SetParent(pParent_->GetTransform());
 
 	// TODO: Š‚¤‚È‚ç‚Î new ‚µ‚½‚ ‚ÆŽ¸”s‚·‚é‰Â”\«‚àl—¶‚·‚×‚«
-	pFbx_ = new Fbx{};
-	pFbx_->Load("Oden.fbx");
+	/*pFbx_ = new Fbx{};
+	pFbx_->Load("");*/
+
+	hModel_ = Model::Load("Oden.fbx");
 
 	transform_.scale_.x = 0.3f;
 	transform_.scale_.y = 0.3f;
@@ -33,13 +35,10 @@ void ChildOden::Update()
 
 void ChildOden::Draw()
 {
-	if (pFbx_)
-	{
-		pFbx_->Draw(transform_);
-	}
+	Model::SetTransform(hModel_, transform_);
+	Model::Draw(hModel_);
 }
 
 void ChildOden::Release()
 {
-	SAFE_RELEASE(pFbx_);
 }

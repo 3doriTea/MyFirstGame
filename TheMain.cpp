@@ -18,6 +18,7 @@
 #include "Engine/Sprite2D.h"
 #include "Engine/Fbx.h"
 #include "Engine/Input.h"
+#include "Engine/Model.h"
 
 #include "Engine/RootJob.h"
 
@@ -276,6 +277,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	{
 		pRootJob->ReleaseSub();
 	}
+	Model::Release();
 	//SAFE_RELEASE(pRootJob);
 
 	#pragma region 過去の遺物おでん

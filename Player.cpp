@@ -1,9 +1,9 @@
 #include "Player.h"
-#include "Engine/Fbx.h"
+#include "Engine/Model.h"
 
 Player::Player(GameObject* _pParent) :
 	GameObject{ _pParent, "Player" },
-	pFbx_{ nullptr }
+	hModel_{ -1 }
 {
 }
 
@@ -13,9 +13,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
-	// TODO: Š‚¤‚È‚ç‚Î new ‚µ‚½‚ ‚ÆŽ¸”s‚·‚é‰Â”\«‚àl—¶‚·‚×‚«
-	pFbx_ = new Fbx{};
-	pFbx_->Load("Oden.fbx");
+	hModel_ = Model::Load("Oden.fbx");
 
 	transform_.scale_.x = 0.7f;
 	transform_.scale_.y = 0.7f;
@@ -25,7 +23,7 @@ void Player::Initialize()
 void Player::Update()
 {
 	transform_.rotate_.y += 0.01f;
-	if (transform_.rotate_.y > 2.0f)
+	if (transform_.rotate_.y > 60.0f)
 	{
 		DestroyMe();
 	}
@@ -33,13 +31,10 @@ void Player::Update()
 
 void Player::Draw()
 {
-	if (pFbx_)
-	{
-		pFbx_->Draw(transform_);
-	}
+	Model::SetTransform(hModel_, transform_);
+	Model::Draw(hModel_);
 }
 
 void Player::Release()
 {
-	SAFE_RELEASE(pFbx_);
 }
