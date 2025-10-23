@@ -1,6 +1,8 @@
 #include "Player.h"
 #include "Engine/Model.h"
 
+#include <cmath>
+
 Player::Player(GameObject* _pParent) :
 	GameObject{ _pParent, "Player" },
 	hModel_{ -1 }
@@ -22,7 +24,16 @@ void Player::Initialize()
 
 void Player::Update()
 {
-	transform_.rotate_.y += 0.01f;
+	static float angle{};
+	angle += XM_2PI / 120;
+	while (angle >= XM_2PI)
+	{
+		angle -= XM_2PI;
+	}
+	transform_.position_.x = 6.0f * std::sinf(angle) - 3.0f;
+	transform_.position_.z = 6.0f * std::cosf(angle) - 3.0f;
+
+	transform_.rotate_.y += 0.1f;
 	if (transform_.rotate_.y > 60.0f)
 	{
 		DestroyMe();

@@ -1,8 +1,11 @@
 #include "PlayScene.h"
+#include "Engine/Input.h"
 #include "Player.h"
 #include "ChildOden.h"
+#include "Engine/SceneManager.h"
 
-PlayScene::PlayScene(GameObject* pParent)
+PlayScene::PlayScene(GameObject* pParent) :
+	GameObject{ pParent, "PlayScene" }
 {
 }
 
@@ -25,6 +28,10 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
+	if (Input::IsKeyDown(DIK_SPACE))
+	{
+		GetSceneManager()->Move(SceneManager::Scene::Test);
+	}
 }
 
 void PlayScene::Draw()

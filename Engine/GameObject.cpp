@@ -1,4 +1,7 @@
 #include "GameObject.h"
+#include "RootJob.h"
+#include "SceneManager.h"
+
 
 GameObject::GameObject() :
 	GameObject{ nullptr, "GameObject" }
@@ -15,6 +18,57 @@ GameObject::~GameObject()
 {
 }
 
+RootJob* GameObject::GetRootJob()
+{
+	GameObject* pGameObject{ this };
+	while (pGameObject->GetParent() != nullptr)
+	{
+		pGameObject = pGameObject->GetParent();
+	}
+	return dynamic_cast<RootJob*>(pGameObject);
+}
+
+GameObject* GameObject::FindGameObject(const std::string& _name)
+{
+	return GetRootJob()->FindChild([&_name](GameObject* _pGameObject){ return _pGameObject->name_ == _name; });
+}
+
+GameObject* GameObject::FindChild(const std::function<bool(GameObject*)>& _checkCallback)
+{
+	if (_checkCallback(this))
+	{
+		return this;
+	}
+	else
+	{
+
+	}
+
+	for (auto child : *this)
+	{
+		if (_checkCallback(child))
+		{
+			return child;
+		}
+	}
+
+	for (auto child : *this)
+	{
+		GameObject* foundGameObject = child->FindChild(_checkCallback);
+		if (foundGameObject)
+		{
+			return foundGameObject;
+		}
+	}
+
+	return nullptr;
+}
+
+SceneManager* GameObject::GetSceneManager()
+{
+	return FindGameObject<SceneManager>();
+}
+
 void GameObject::DrawSub()
 {
 	this->Draw();
@@ -27,6 +81,7 @@ void GameObject::DrawSub()
 
 void GameObject::UpdateSub()
 {
+	transform_.Calculation();
 	this->Update();
 	for (auto pChild : childList_)
 	{
@@ -54,5 +109,6 @@ void GameObject::ReleaseSub()
 	{
 		pChild->ReleaseSub();
 	}
+	childList_.clear();
 	this->Release();
 }
