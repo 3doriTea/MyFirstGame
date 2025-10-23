@@ -15,7 +15,6 @@ ChildOden::~ChildOden()
 
 void ChildOden::Initialize()
 {
-	transform_.SetParent(pParent_->GetTransform());
 
 	// TODO: Š‚¤‚È‚ç‚Î new ‚µ‚½‚ ‚ÆŽ¸”s‚·‚é‰Â”\«‚àl—¶‚·‚×‚«
 	/*pFbx_ = new Fbx{};
@@ -30,11 +29,13 @@ void ChildOden::Initialize()
 
 void ChildOden::Update()
 {
+	transform_.SetParent(pParent_->GetTransform());
 	transform_.rotate_.y += 0.1f;
 }
 
 void ChildOden::Draw()
 {
+	transform_.Calculation();
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }

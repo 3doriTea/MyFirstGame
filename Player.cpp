@@ -31,6 +31,7 @@ void Player::Update()
 
 void Player::Draw()
 {
+	transform_.Calculation();
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
 }

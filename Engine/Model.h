@@ -23,7 +23,7 @@ namespace Model
 	/// </summary>
 	/// <param name="_hModel"></param>
 	/// <param name="_transform"></param>
-	void SetTransform(const int _hModel, const Transform _transform);
+	void SetTransform(const int _hModel, const Transform& _transform);
 	
 	/// <summary>
 	/// ƒ‚ƒfƒ‹‚ð•`‰æ‚·‚é
