@@ -104,6 +104,9 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Snake.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -167,6 +170,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="TestScene.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Snake.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>
