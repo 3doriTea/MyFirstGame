@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "Engine/Model.h"
+#include "Engine/SphereCollider.h"
 
 #include <cmath>
 
@@ -16,6 +17,7 @@ Player::~Player()
 void Player::Initialize()
 {
 	hModel_ = Model::Load("Oden.fbx");
+	AddCollider(new SphereCollider{ {}, 3.0f });
 
 	transform_.scale_.x = 0.7f;
 	transform_.scale_.y = 0.7f;

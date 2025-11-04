@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "ChildOden.h"
 #include "Engine/SceneManager.h"
+#include "Enemy.h"
 
 PlayScene::PlayScene(GameObject* pParent) :
 	GameObject{ pParent, "PlayScene" }
@@ -24,6 +25,8 @@ void PlayScene::Initialize()
 	Player* pPlayer = Instantiate<Player>(this);
 	Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, 3.5 });
 	Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, -3.5 });
+	
+	Enemy* pEnemy = Instantiate<Enemy>(this);
 }
 
 void PlayScene::Update()

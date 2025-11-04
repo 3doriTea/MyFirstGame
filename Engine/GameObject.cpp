@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "RootJob.h"
 #include "SceneManager.h"
+#include "SphereCollider.h"
 
 
 GameObject::GameObject() :
@@ -10,7 +11,8 @@ GameObject::GameObject() :
 
 GameObject::GameObject(GameObject* _pParent, const std::string& _name) :
 	pParent_{ _pParent },
-	name_{ _name }
+	name_{ _name },
+	pCollider_{ nullptr }
 {
 }
 
@@ -83,6 +85,9 @@ void GameObject::UpdateSub()
 {
 	transform_.Calculation();
 	this->Update();
+
+	RoundRobin(GetRootJob());
+
 	for (auto pChild : childList_)
 	{
 		pChild->UpdateSub();
@@ -111,4 +116,66 @@ void GameObject::ReleaseSub()
 	}
 	childList_.clear();
 	this->Release();
+}
+
+void GameObject::AddCollider(SphereCollider* _pCollider)
+{
+	pCollider_ = _pCollider;
+}
+
+void GameObject::Collision(GameObject* _pTarget)
+{
+	if (!_pTarget)
+	{
+		return;  // ターゲットがいないならダメ
+	}
+	if (!pCollider_ || !_pTarget->pCollider_)
+	{
+		return;  // 両方ともにコライダーがなければダメ
+	}
+
+	// 閾値
+	float threshold
+	{
+		(pCollider_->GetRadius() + _pTarget->pCollider_->GetRadius())
+		* (pCollider_->GetRadius() + _pTarget->pCollider_->GetRadius())
+	};
+
+	XMVECTOR diff  // 距離
+	{
+		(XMLoadFloat3(&this->transform_.position_) + pCollider_->GetCenter())
+		- (XMLoadFloat3(&_pTarget->transform_.position_) + _pTarget->pCollider_->GetCenter())
+	};
+
+	float distance{ XMVector3LengthSq(diff).m128_f32[0] };
+	/*for (int i = 0; i < 3; i++)
+	{
+		distance += diff.m128_f32[i] * diff.m128_f32[i];
+	}*/
+
+	if (distance <= threshold)
+	{
+		OnCollision();
+
+		MessageBox(nullptr, L"あたったお", L"あたった", MB_OK);
+	}
+}
+
+void GameObject::RoundRobin(GameObject* _pTarget)
+{
+	if (!pCollider_)
+	{
+		return;
+	}
+	if (_pTarget->pCollider_)
+	{
+		return;
+	}
+
+	_pTarget->Collision(this);
+
+	for (auto& child : _pTarget->childList_)
+	{
+		RoundRobin(child);
+	}
 }

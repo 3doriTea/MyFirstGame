@@ -17,6 +17,7 @@ void RootJob::Initialize()
 
 void RootJob::Update()
 {
+	RoundRobin(this);  // TODO: “–‚½‚è”»’è‚ÌŒÄ‚Ñ•û‚ð‰ü—Ç‚·‚é
 }
 
 void RootJob::Draw()

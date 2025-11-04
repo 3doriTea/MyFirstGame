@@ -107,6 +107,12 @@
     <ClCompile Include="Snake.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\SphereCollider.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -173,6 +179,12 @@
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Snake.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\SphereCollider.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>

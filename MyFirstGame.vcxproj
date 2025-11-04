@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ChildOden.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Engine\Camera.h" />
     <ClInclude Include="Engine\Direct3D.h" />
     <ClInclude Include="Engine\Fbx.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="Engine\Model.h" />
     <ClInclude Include="Engine\RootJob.h" />
     <ClInclude Include="Engine\SceneManager.h" />
+    <ClInclude Include="Engine\SphereCollider.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Engine\Input.h" />
     <ClInclude Include="Player.h" />
@@ -168,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildOden.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Engine\Camera.cpp" />
     <ClCompile Include="Engine\Direct3D.cpp" />
     <ClCompile Include="Engine\Fbx.cpp" />
@@ -176,6 +179,7 @@
     <ClCompile Include="Engine\Model.cpp" />
     <ClCompile Include="Engine\RootJob.cpp" />
     <ClCompile Include="Engine\SceneManager.cpp" />
+    <ClCompile Include="Engine\SphereCollider.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
     <ClCompile Include="Snake.cpp" />

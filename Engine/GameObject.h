@@ -10,6 +10,7 @@
 class SceneManager;
 class GameObject;
 class RootJob;
+class SphereCollider;
 
 template<typename T>
 concept GameObjectT = std::is_base_of_v<GameObject, T>;
@@ -26,6 +27,8 @@ public:
 	virtual void Update() {}
 	virtual void Release() {}
 	virtual void Draw() {}
+
+	virtual void OnCollision() {}
 
 	template<GameObjectT T, typename ...Arg>
 	T* Instantiate(GameObject* _pParent, Arg... _arg);
@@ -56,6 +59,22 @@ public:
 
 	Transform* GetTransform() { return &transform_; };
 
+	/// <summary>
+	/// コライダーを追加する
+	/// </summary>
+	/// <param name="_pCollider"></param>
+	void AddCollider(SphereCollider* _pCollider);
+	/// <summary>
+	/// 指定したゲームオブジェクトから当たり判定をする
+	/// </summary>
+	/// <param name="_pTarget">対象となるゲームオブジェクト</param>
+	void Collision(GameObject* _pTarget);
+
+	/// <summary>
+	/// 総当たり判定をする
+	/// </summary>
+	/// <param name="_pTarget">対象</param>
+	void RoundRobin(GameObject* _pTarget);
 private:
 	struct Status
 	{
@@ -67,6 +86,8 @@ protected:
 	Transform transform_;  // 座標系
 	GameObject* pParent_;  // 親のゲームオブジェクトポインタ
 	std::string name_;  // オブジェクトの名前
+	SphereCollider* pCollider_;  // コライダーのポインタ
+	// TODO: 今後複数のコライダーを持てるようにする
 };
 
 template<GameObjectT T, typename ...Arg>
