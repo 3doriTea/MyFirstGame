@@ -261,13 +261,13 @@ void Fbx::InitVertex(FbxMesh* mesh)
 				0.0f
 			};
 
-			OutputDebugString(std::format(
+			/*OutputDebugString(std::format(
 				L"i={}({}, {}, {})\n",
 				index,
 				vertices[index].normal.m128_f32[X],
 				vertices[index].normal.m128_f32[Y],
 				vertices[index].normal.m128_f32[Z]
-				).c_str());
+				).c_str());*/
 		}
 	}
 

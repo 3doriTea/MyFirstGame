@@ -1,7 +1,11 @@
 #include "Player.h"
 #include "Engine/Model.h"
 #include "Engine/SphereCollider.h"
+#include "Engine/Input.h"
 
+#include "Enemy.h"
+
+#include <format>
 #include <cmath>
 
 Player::Player(GameObject* _pParent) :
@@ -16,6 +20,7 @@ Player::~Player()
 
 void Player::Initialize()
 {
+	transform_.position_ = { 0.0f, 0.0f, 0.0f };
 	hModel_ = Model::Load("Oden.fbx");
 	AddCollider(new SphereCollider{ {}, 3.0f });
 
@@ -26,6 +31,23 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	Enemy* enemy{ FindGameObject<Enemy>()};
+
+	XMVECTOR ePos{ XMLoadFloat3(&enemy->GetTransform()->position_) };
+	XMVECTOR pPos{ XMLoadFloat3(&transform_.position_) };
+
+	float distance{ XMVector3Length(ePos - pPos).m128_f32[0] };
+
+	OutputDebugString(std::format(L"{}m\n", distance).c_str());
+	//OutputDebugString(std::format(L"{}m\n", distance).c_str());
+
+	if (Input::IsKey(DIK_X))
+	{
+		transform_.position_.z += 0.1f;
+	}
+
+	return;
+
 	static float angle{};
 	angle += XM_2PI / 120;
 	while (angle >= XM_2PI)
@@ -51,4 +73,9 @@ void Player::Draw()
 
 void Player::Release()
 {
+}
+
+void Player::OnCollision(GameObject* _pTarget)
+{
+	OutputDebugString(std::format(L"HIT PLAYER \n", _pTarget->name_));
 }

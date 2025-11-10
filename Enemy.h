@@ -12,6 +12,8 @@ public:
 	void Release() override;
 	void Draw() override;
 
+	void OnCollision() override;
+
 private:
 	int hModel_;  // ƒ‚ƒfƒ‹‚Ìƒnƒ“ƒhƒ‹
 };

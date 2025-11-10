@@ -50,14 +50,6 @@ namespace Input
 		mouseDevice->GetDeviceState(sizeof(mouseState), &mouseState);
 
 		XInputGetState(0, &controllerState_);
-
-		OutputDebugString(std::format(
-			L"{}, {}, {}, {}\n",
-			mouseState.rgbButtons[0],
-			mouseState.rgbButtons[1],
-			mouseState.rgbButtons[2],
-			mouseState.rgbButtons[3]
-			).c_str());
 	}
 
 	bool IsKey(int keyCode)

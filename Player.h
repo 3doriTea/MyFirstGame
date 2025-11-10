@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include <format>
 
 class Player : public GameObject
 {
@@ -11,6 +12,8 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+
+	void OnCollision(GameObject* _pTarget) override;
 
 private:
 	int hModel_;

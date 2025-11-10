@@ -172,7 +172,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			pRootJob->Update();
 
-			if (Input::IsKeyUp(DIK_ESCAPE) || Input::IsMouseButtonDown(0x00))
+			/*if (Input::IsKeyUp(DIK_ESCAPE) || Input::IsMouseButtonDown(0x00))
 			{
 				static int count{ 0 };
 				count++;
@@ -180,7 +180,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				{
 					PostQuitMessage(0);
 				}
-			}
+			}*/
 
 			//DirectX::XMVECTOR pos{ Input::GetMousePosition() };
 			//OutputDebugString(std::format(L"x:{}, y:{}\n", pos.m128_f32[0], pos.m128_f32[1]).c_str());

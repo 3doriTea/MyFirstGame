@@ -29,6 +29,7 @@ public:
 	virtual void Draw() {}
 
 	virtual void OnCollision() {}
+	virtual void OnCollision(GameObject* pGameObject) {}
 
 	template<GameObjectT T, typename ...Arg>
 	T* Instantiate(GameObject* _pParent, Arg... _arg);

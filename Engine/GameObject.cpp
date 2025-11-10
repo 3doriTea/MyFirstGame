@@ -2,6 +2,7 @@
 #include "RootJob.h"
 #include "SceneManager.h"
 #include "SphereCollider.h"
+#include <format>
 
 
 GameObject::GameObject() :
@@ -153,26 +154,24 @@ void GameObject::Collision(GameObject* _pTarget)
 		distance += diff.m128_f32[i] * diff.m128_f32[i];
 	}*/
 
+	OutputDebugString(std::format(L"dist{} shild{}\n", distance, threshold).c_str());
 	if (distance <= threshold)
 	{
 		OnCollision();
-
-		MessageBox(nullptr, L"‚ ‚½‚Á‚½‚¨", L"‚ ‚½‚Á‚½", MB_OK);
+		OnCollision(_pTarget);
 	}
 }
 
 void GameObject::RoundRobin(GameObject* _pTarget)
 {
-	if (!pCollider_)
+	if (pCollider_ && _pTarget->pCollider_ && pCollider_ != _pTarget->pCollider_)
 	{
-		return;
+		OutputDebugString(
+			std::format(L"{}to{}\n",
+			std::wstring{ this->name_.begin(), this->name_.end() },
+			std::wstring{ _pTarget->name_.begin(), _pTarget->name_.end() }).c_str());
+		_pTarget->Collision(this);
 	}
-	if (_pTarget->pCollider_)
-	{
-		return;
-	}
-
-	_pTarget->Collision(this);
 
 	for (auto& child : _pTarget->childList_)
 	{
