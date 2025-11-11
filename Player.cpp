@@ -77,5 +77,5 @@ void Player::Release()
 
 void Player::OnCollision(GameObject* _pTarget)
 {
-	OutputDebugString(std::format(L"HIT PLAYER \n", _pTarget->name_));
+	//OutputDebugString(std::format(L"HIT PLAYER \n", std::wstring{ _pTarget->name_.begin(), _pTarget->name_.end() }));
 }
