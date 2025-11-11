@@ -19,6 +19,7 @@
 #include "Engine/Fbx.h"
 #include "Engine/Input.h"
 #include "Engine/Model.h"
+#include "Engine/Cursor.h"
 
 #include "Engine/RootJob.h"
 
@@ -32,6 +33,9 @@ const wchar_t* WIN_CLASS_NAME{ L"△プルGameうぃん同" };
 // ウィンドウ幅
 const int SCREEN_WIDTH{ 800 };
 const int SCREEN_HEIGHT{ 600 };
+
+// ウィンドウ範囲
+RECT windowRect;
 
 // グローバル変数:
 HINSTANCE hInst;                                // 現在のインターフェイス
@@ -131,6 +135,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	pRootJob = new RootJob{ nullptr };
 	pRootJob->Initialize();
 
+	Cursor::Initialize(hWnd, windowRect, { SCREEN_WIDTH, SCREEN_HEIGHT });
+
 	timeBeginPeriod(1);
 	while (msg.message != WM_QUIT)
 	{
@@ -141,9 +147,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		else  //メッセージなし
 		{
-			//static long long int count{ 0 };
-			//SetWindowTextA(hWnd, std::format("Sample Game count:{}", count++).c_str());
-
 			static DWORD secPrevTime{ timeGetTime() };
 			static DWORD prevTime{ timeGetTime() };
 
@@ -186,6 +189,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			//OutputDebugString(std::format(L"x:{}, y:{}\n", pos.m128_f32[0], pos.m128_f32[1]).c_str());
 
 			pRootJob->UpdateSub();
+
+			Cursor::ClearMove();
 
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
@@ -364,7 +369,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	- `LPVOID lpParam` : ウィンドウ作成時に渡す追加パラメータ（通常はNULL）
 	*/
 
-	RECT windowRect{ 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	windowRect = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 	assert(
 		AdjustWindowRectEx(
 			&windowRect,
@@ -487,7 +492,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 	case WM_MOUSEMOVE:
-		Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
+		if (Cursor::IsLock())
+		{
+			Cursor::AddMove(LOWORD(lParam), HIWORD(lParam));
+		}
+		else
+		{
+			Input::SetMousePosition(LOWORD(lParam), HIWORD(lParam));
+		}
 		return 0;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

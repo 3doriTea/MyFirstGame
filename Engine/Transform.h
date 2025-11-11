@@ -29,6 +29,12 @@ public:
 	/// <returns>法線の行列</returns>
 	XMMATRIX GetNormalMatrix() const;
 
+	/// <summary>
+	/// 回転行列を取得する
+	/// </summary>
+	/// <returns>回転行列</returns>
+	XMMATRIX GetRotateMatrix() const { return matRotate_; }
+
 	void SetParent(Transform* _pParent) { pParent_ = _pParent; }
 
 private:

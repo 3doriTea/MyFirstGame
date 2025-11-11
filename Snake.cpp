@@ -13,7 +13,10 @@ Snake::~Snake()
 
 void Snake::Initialize()
 {
-	hModel_ = Model::Load("Snake.fbx");
+	hModel_ = Model::Load("Ground/Ground2.fbx");
+	//hModel_ = Model::Load("Oden.fbx");
+	//hModel_ = Model::Load("Sphere.fbx");
+	//hModel_ = Model::Load("Snake.fbx");
 }
 
 void Snake::Update()

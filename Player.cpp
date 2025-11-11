@@ -8,6 +8,11 @@
 #include <format>
 #include <cmath>
 
+namespace
+{
+	const float MOVE_SPEED_PER_FRAME{ 1.0f };
+}
+
 Player::Player(GameObject* _pParent) :
 	GameObject{ _pParent, "Player" },
 	hModel_{ -1 }
@@ -31,6 +36,48 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	transform_.Calculation();
+
+	XMFLOAT3 moveDirection{};
+
+	if (Input::IsKey(DIK_W))
+	{
+		moveDirection.z += 1.0f;
+	}
+	if (Input::IsKey(DIK_A))
+	{
+		moveDirection.x -= 1.0f;
+	}
+	if (Input::IsKey(DIK_S))
+	{
+		moveDirection.z -= 1.0f;
+	}
+	if (Input::IsKey(DIK_D))
+	{
+		moveDirection.x += 1.0f;
+	}
+
+	if (Input::IsKey(DIK_LEFTARROW))
+	{
+		transform_.rotate_.y += 0.001f * (180.0f / XM_PI);
+	}
+	if (Input::IsKey(DIK_RIGHTARROW))
+	{
+		transform_.rotate_.y -= 0.001f * (180.0f / XM_PI);
+	}
+
+	XMVECTOR mv{ XMLoadFloat3(&moveDirection) * MOVE_SPEED_PER_FRAME };
+
+	mv = XMVector3TransformCoord(mv, transform_.GetNormalMatrix());
+
+	XMVECTOR toPosition{ XMLoadFloat3(&transform_.position_) };
+
+	toPosition += mv;
+
+	XMStoreFloat3(&transform_.position_, toPosition);
+
+	return;
+
 	Enemy* enemy{ FindGameObject<Enemy>()};
 
 	XMVECTOR ePos{ XMLoadFloat3(&enemy->GetTransform()->position_) };

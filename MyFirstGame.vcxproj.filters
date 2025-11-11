@@ -113,6 +113,15 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Ground.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Cursor.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -186,6 +195,15 @@
     </ClInclude>
     <ClInclude Include="Enemy.h">
       <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Ground.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Cursor.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

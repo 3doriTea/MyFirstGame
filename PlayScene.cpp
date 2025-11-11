@@ -5,6 +5,9 @@
 #include "ChildOden.h"
 #include "Engine/SceneManager.h"
 #include "Enemy.h"
+#include "CameraController.h"
+#include "Ground.h"
+#include "Engine/Cursor.h"
 
 PlayScene::PlayScene(GameObject* pParent) :
 	GameObject{ pParent, "PlayScene" }
@@ -31,10 +34,24 @@ void PlayScene::Initialize()
 	//Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, -3.5 });
 	
 	Enemy* pEnemy = Instantiate<Enemy>(this);
+
+	CameraController* pCameraController{ Instantiate<CameraController>(this) };
+	Ground* pGround{ Instantiate<Ground>(this) };
+
+	Cursor::SetLock(true);
 }
 
 void PlayScene::Update()
 {
+	if (Input::IsKeyDown(DIK_ESCAPE))
+	{
+		Cursor::SetLock(false);
+	}
+	if (Input::IsMouseButton(0))
+	{
+		Cursor::SetLock(true);
+	}
+
 	if (Input::IsKeyDown(DIK_SPACE))
 	{
 		GetSceneManager()->Move(SceneManager::Scene::Test);

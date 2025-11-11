@@ -27,21 +27,30 @@ Fbx::~Fbx()
 HRESULT Fbx::Load(std::string fileName)
 {
 	fs::path current{ fs::current_path() };
-	fs::path subPath{ "./Assets" };
+	fs::path subPath{ "Assets" };
+
+	fs::path fullPath{ fs::current_path() };
+	fullPath /= subPath / fileName;
+
+	assert(fs::is_regular_file(fullPath) && "fbxファイルが見つからない");
+	assert(fullPath.extension() == ".fbx" && "拡張子が fbxではない");
+
 	/*wchar_t currDir[MAX_PATH]{};
 	GetCurrentDirectory(MAX_PATH, currDir);*/
-	fs::current_path(subPath);
+	fs::current_path(fullPath.parent_path());
 
 	//マネージャを生成
 	FbxManager* pFbxManager = FbxManager::Create();
 
 	//インポーターを生成
 	FbxImporter* fbxImporter = FbxImporter::Create(pFbxManager, "imp");
-	fbxImporter->Initialize(fileName.c_str(), -1, pFbxManager->GetIOSettings());
+	fbxImporter->Initialize(fullPath.string().c_str(), -1, pFbxManager->GetIOSettings());
 
 	//シーンオブジェクトにFBXファイルの情報を流し込む
 	FbxScene* pFbxScene = FbxScene::Create(pFbxManager, "fbxscene");
-	fbxImporter->Import(pFbxScene);
+	bool succeed{ fbxImporter->Import(pFbxScene) };
+	assert(succeed && "fbx読み込みに失敗");
+
 	fbxImporter->Destroy();
 
 	// ノードはfbxでのメッシュが入っているやつ
@@ -49,7 +58,13 @@ HRESULT Fbx::Load(std::string fileName)
 	// メッシュ情報を取得
 	FbxNode* rootNode = pFbxScene->GetRootNode();
 	FbxNode* pNode = rootNode->GetChild(0);
+	
+	assert(pNode != nullptr && "ノードの読み込みに失敗");
+	
+	int childCount{ rootNode->GetChildCount() };
+
 	FbxMesh* mesh = pNode->GetMesh();
+	assert(mesh != nullptr && "メッシュ情報が読み込めなかった");
 
 	// 各情報の個数を取得
 
