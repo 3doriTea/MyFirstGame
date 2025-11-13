@@ -4,7 +4,7 @@
 class Enemy : public GameObject
 {
 public:
-	Enemy(GameObject* _pParent);
+	Enemy(GameObject* _pParent, GameObject* _pPlayer);
 	~Enemy();
 
 	void Initialize() override;
@@ -14,6 +14,15 @@ public:
 
 	void OnCollision() override;
 
+	/// <summary>
+	/// 撃っている間か
+	/// </summary>
+	/// <returns>撃っている間 true / false</returns>
+	bool IsFiring() const { return fireTimeLeft_ > 0.0f; }
+
 private:
-	int hModel_;  // モデルのハンドル
+	int hNormalModel_;  // モデルのハンドル
+	int hFireModel_;  // モデルのハンドル
+
+	float fireTimeLeft_;
 };

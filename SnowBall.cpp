@@ -50,5 +50,6 @@ void SnowBall::Draw()
 {
 	transform_.Calculation();
 	Model::SetTransform(hModel_, transform_);
+	Direct3D::UseOnceShader(Direct3D::SHADER_BULLET);
 	Model::Draw(hModel_);
 }

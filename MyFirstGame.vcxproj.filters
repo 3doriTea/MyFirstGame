@@ -48,6 +48,9 @@
     <FxCompile Include="Simple2D.hlsl">
       <Filter>シェーダ ファイル</Filter>
     </FxCompile>
+    <FxCompile Include="Bullet3D.hlsl">
+      <Filter>シェーダ ファイル</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -210,6 +213,9 @@
     </ClInclude>
     <ClInclude Include="SnowBall.h">
       <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderInitializer.h">
+      <Filter>Engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,6 +15,16 @@ public:
 
 	void OnCollision(GameObject* _pTarget) override;
 
+	/// <summary>
+	/// “y‘ä‚Ìã‚©”Û‚©
+	/// </summary>
+	/// <returns>“y‘ä‚Ìã‚Å‚ ‚é true / false</returns>
+	bool IsDirectlyGround() const;
+
+	/// <summary>
+	/// “y‘ä”ÍˆÍŠO‚Ü‚Å‰Ÿ‚·
+	/// </summary>
+	void PushToOutsideDirectlyGround();
 private:
 	int hModel_;
 	float shootTimeLeft_;

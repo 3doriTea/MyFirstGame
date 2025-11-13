@@ -51,10 +51,13 @@ void CameraController::Update()
 	toMovePosV = XMVector3TransformCoord(toMovePosV, ppTransform->GetRotateMatrix());
 	toMovePosV += playerPosV;
 
+	//transform_.position_.y = ppTransform->position_.y + CAMERA_OFFSET.m128_f32[1];
 	XMVECTOR currentPosV{ XMLoadFloat3(&transform_.position_) };
 	
 	toMovePosV = (toMovePosV - currentPosV) / 4.0f + currentPosV;
 	
+	toMovePosV.m128_f32[1] = ppTransform->position_.y + CAMERA_OFFSET.m128_f32[1];
+
 	XMStoreFloat3(&transform_.position_, toMovePosV);
 
 

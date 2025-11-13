@@ -95,7 +95,7 @@ void Fbx::Draw(Transform& transform)
 {
 #if 1
 	//Quad‚ðƒAƒŒƒ“ƒW
-	Direct3D::SetShader(Direct3D::SHADER_FBX);
+	Direct3D::SetShader(Direct3D::TryGetOnceShader(Direct3D::SHADER_FBX));
 	transform.Calculation();
 
 	CONSTANT_BUFFER cb{};

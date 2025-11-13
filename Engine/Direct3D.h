@@ -40,6 +40,7 @@ public:
 		SHADER_3D,  // 3Dシェーダ
 		SHADER_2D,  // 2Dシェーダ
 		SHADER_FBX,  // Fbx
+		SHADER_BULLET,  // 弾
 		SHADER_MAX,  // シェーダの種類数
 	};
 
@@ -66,6 +67,9 @@ public:
 	HRESULT InitializeShader3D();
 	HRESULT InitializeShader2D();
 	HRESULT InitializeShaderFbx();
+	HRESULT InitializeShaderBullet();
+
+	HRESULT InitializeShader();
 
 	/// <summary>
 	/// 描画開始
@@ -86,6 +90,14 @@ public:
 	
 	static inline Vector2Int ScreenSize() { return pInstance_->screenSize_; }
 
+	static void UseOnceShader(const ShaderType _shader) { pInstance_->onceShader_ = _shader; }
+	/// <summary>
+	/// 試しに一度きりセットされたシェーダを取得する
+	/// </summary>
+	/// <param name="_toShader">もともと予定していたシェーダ</param>
+	/// <returns></returns>
+	static ShaderType TryGetOnceShader(ShaderType _toShader);
+
 private:
 	Direct3D();
 	~Direct3D();
@@ -105,4 +117,6 @@ private:
 
 	ID3D11Texture2D* pDepthStencil_;             // 深度ステンシル
 	ID3D11DepthStencilView* pDepthStencilView_;  // 深度ステンシルビュー
+
+	ShaderType onceShader_;  // 一度きり使うシェーダ
 };

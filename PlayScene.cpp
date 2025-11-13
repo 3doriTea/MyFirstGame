@@ -33,7 +33,7 @@ void PlayScene::Initialize()
 	//Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, 3.5 });
 	//Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, -3.5 });
 	
-	Enemy* pEnemy = Instantiate<Enemy>(this);
+	Enemy* pEnemy = Instantiate<Enemy>(this, pPlayer);
 
 	CameraController* pCameraController{ Instantiate<CameraController>(this) };
 	Ground* pGround{ Instantiate<Ground>(this) };

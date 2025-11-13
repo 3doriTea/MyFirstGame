@@ -12,13 +12,17 @@
 namespace
 {
 	const float MOVE_SPEED_PER_FRAME{ 1.0f };
-	const float SHOOT_COOL_TIME{ 0.5f };
+	const float GROUND_FRICTION_RATE_PER_FRAME{ 1.6f };
+	const float SHOOT_COOL_TIME{ 0.1f };
 	const float SHOOT_SPEED{ 3.0f };
 	const XMFLOAT3 SHOOT_DIRECTION{ 0.0f, 0.5f, 1.0f };
 	const XMVECTOR SHOOT_VELOCITY_V{ XMVector3Normalize(XMLoadFloat3(&SHOOT_DIRECTION)) * SHOOT_SPEED };
 	const float FIXED_DELTA_TIME{ 1.0f / 60.0f };
-	const float JUMP_POWER{ 10.0f };
+	const float JUMP_POWER{ 1.0f };
 	const float FALL_SPEED{ 0.01f };
+
+	const float GROUND_RADIUS{ 300.0f };
+	const float PLAYER_COLL_RADIUS{ 3.0f };
 }
 
 Player::Player(GameObject* _pParent) :
@@ -85,6 +89,10 @@ void Player::Update()
 	}
 
 	XMVECTOR mv{ XMLoadFloat3(&moveDirection) * MOVE_SPEED_PER_FRAME };
+	if (onGrounded_)
+	{
+		mv /= GROUND_FRICTION_RATE_PER_FRAME;
+	}
 	mv = XMVector3TransformCoord(mv, transform_.GetNormalMatrix());
 
 	XMVECTOR toPosition{ XMLoadFloat3(&transform_.position_) };
@@ -93,14 +101,21 @@ void Player::Update()
 
 	XMStoreFloat3(&transform_.position_, toPosition);
 
-	if (transform_.position_.y <= 0.0f)
+	if (transform_.position_.y <= 0.0f && IsDirectlyGround())
 	{
-		onGrounded_ = true;
-		velocityY_ = 0.0f;
-		transform_.position_.y = 0.0f;
-		if (Input::IsKey(DIK_SPACE))
+		if (transform_.position_.y >= -PLAYER_COLL_RADIUS)  // まだ復帰可能な範囲か
 		{
-			velocityY_ += JUMP_POWER;
+			onGrounded_ = true;
+			velocityY_ = 0.0f;
+			transform_.position_.y = 0.0f;
+			if (Input::IsKey(DIK_SPACE))
+			{
+				velocityY_ += JUMP_POWER;
+			}
+		}
+		else  // 復帰不可能な範囲
+		{
+			PushToOutsideDirectlyGround();
 		}
 	}
 	else
@@ -108,6 +123,8 @@ void Player::Update()
 		onGrounded_ = false;
 		velocityY_ -= FALL_SPEED;
 	}
+
+	transform_.position_.y += velocityY_;
 }
 
 void Player::Draw()
@@ -124,4 +141,20 @@ void Player::Release()
 void Player::OnCollision(GameObject* _pTarget)
 {
 	//OutputDebugString(std::format(L"HIT PLAYER \n", std::wstring{ _pTarget->name_.begin(), _pTarget->name_.end() }));
+}
+
+bool Player::IsDirectlyGround() const
+{
+	return XMVector3LengthSq(XMLoadFloat3(&transform_.position_)).m128_f32[0]
+		<= (GROUND_RADIUS + PLAYER_COLL_RADIUS) * (GROUND_RADIUS + PLAYER_COLL_RADIUS);
+}
+
+void Player::PushToOutsideDirectlyGround()
+{
+	XMVECTOR currentPosV{ XMLoadFloat3(&transform_.position_) };
+	currentPosV.m128_f32[1] = 0.0f;
+	XMVECTOR toPosV{ XMVector3Normalize(currentPosV) * (GROUND_RADIUS + PLAYER_COLL_RADIUS) };
+
+	toPosV.m128_f32[1] = transform_.position_.y;
+	XMStoreFloat3(&transform_.position_, toPosV);
 }
