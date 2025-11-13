@@ -190,7 +190,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 			pRootJob->UpdateSub();
 
-			Cursor::ClearMove();
+			//Cursor::ClearMove();
 
 			Direct3D::Instance().BeginDraw();
 			//ゲームの処理
@@ -494,7 +494,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 		if (Cursor::IsLock())
 		{
-			Cursor::AddMove(LOWORD(lParam), HIWORD(lParam));
+			Cursor::UpdateCursorPos(LOWORD(lParam), HIWORD(lParam));
 		}
 		else
 		{

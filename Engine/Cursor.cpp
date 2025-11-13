@@ -6,7 +6,11 @@ namespace
 	RECT clientRect_{};
 	RECT screenRect_{};
 	POINT size_{};
+	POINT move_{};
 	bool isLocking_{};
+	bool ignoreMoved_{};
+
+	POINT prevCursorPoint{};
 }
 
 void Cursor::Initialize(const HWND _hWnd, const RECT& _clientRect, const POINT _size)
@@ -48,6 +52,37 @@ bool Cursor::IsLock()
 	return isLocking_;
 }
 
+void Cursor::AddMove(const int _moveX, const int _moveY)
+{
+	
+
+	move_.x += _moveX;
+	move_.y += _moveY;
+}
+
+POINT Cursor::GetMove()
+{
+	POINT move{ move_ };
+	move_ = {};
+	return move;
+}
+
+void Cursor::UpdateCursorPos(const int _posX, const int _posY)
+{
+	if (ignoreMoved_)
+	{
+		ignoreMoved_ = false;
+	}
+	else
+	{
+		move_.x += _posX - prevCursorPoint.x;
+		move_.y += _posY - prevCursorPoint.y;
+	}
+
+	prevCursorPoint.x = _posX;
+	prevCursorPoint.y = _posY;
+}
+
 void Cursor::SetPositionCenter()
 {
 	POINT topLeft{ clientRect_.left, clientRect_.top };
@@ -62,4 +97,6 @@ void Cursor::SetPositionCenter()
 	ClientToScreen(hWnd_, &center);
 
 	SetCursorPos(center.x, center.y);
+
+	ignoreMoved_ = true;
 }

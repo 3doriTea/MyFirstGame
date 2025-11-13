@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Engine/Camera.h"
 #include "Engine/Input.h"
+#include "Engine/Cursor.h"
 
 CameraController::CameraController(GameObject* _pParent) :
 	GameObject{ _pParent, "CameraController" }
@@ -21,6 +22,12 @@ void CameraController::Initialize()
 
 void CameraController::Update()
 {
+	if (!Cursor::IsLock())
+	{
+		return;
+	}
+	Cursor::SetPositionCenter();
+
 	Transform* ppTransform{ pPlayer_->GetTransform() };
 	assert(ppTransform != nullptr && "プレイヤーのTransformが見つからなかった");
 
@@ -30,10 +37,10 @@ void CameraController::Update()
 	// マウスによる視点と方向操作
 	XMVECTOR currMousePositionV{ Input::GetMousePosition() };
 	XMVECTOR mouseDiffV{ currMousePositionV - prevMousePositionV_ };
-	XMStoreFloat3(&mouseDiff_, mouseDiffV);
-
+	//XMStoreFloat3(&mouseDiff_, mouseDiffV);
+	POINT mouseDiff{ Cursor::GetMove() };
 	//ppTransform->rotate_.x -= mouseDiff_.y / 1000.0f;
-	ppTransform->rotate_.y += mouseDiff_.x / 1000.0f;
+	ppTransform->rotate_.y += mouseDiff.x / 1000.0f;
 	
 	prevMousePositionV_ = currMousePositionV;
 

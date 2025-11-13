@@ -33,7 +33,20 @@ namespace Cursor
 	/// <param name="_moveY">移動量 x</param>
 	void AddMove(const int _moveX, const int _moveY);
 
-	void ClearMove()
+	/// <summary>
+	/// カーソルの移動量を取得する
+	/// </summary>
+	/// <returns>この関数が呼ばれるまでの移動量</returns>
+	POINT GetMove();
+
+	/// <summary>
+	/// カーソルの座標をセットする
+	/// </summary>
+	/// <param name="_posX">カーソルの座標 X</param>
+	/// <param name="_posY">カーソルの座標 Y</param>
+	void UpdateCursorPos(const int _posX, const int _posY);
+
+	//void ClearMove();
 
 	/// <summary>
 	/// マウスカーソルを画面中心に移動する
