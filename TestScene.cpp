@@ -20,7 +20,7 @@ void TestScene::Initialize()
 
 void TestScene::Update()
 {
-	if (Input::IsKeyDown(DIK_SPACE))
+	if (Input::IsKeyDown(DIK_F))
 	{
 		GetSceneManager()->Move(SceneManager::Scene::PLay);
 	}

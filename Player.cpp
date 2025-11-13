@@ -4,6 +4,7 @@
 #include "Engine/Input.h"
 
 #include "Enemy.h"
+#include "SnowBall.h"
 
 #include <format>
 #include <cmath>
@@ -11,11 +12,19 @@
 namespace
 {
 	const float MOVE_SPEED_PER_FRAME{ 1.0f };
+	const float SHOOT_COOL_TIME{ 0.5f };
+	const float SHOOT_SPEED{ 3.0f };
+	const XMFLOAT3 SHOOT_DIRECTION{ 0.0f, 0.5f, 1.0f };
+	const XMVECTOR SHOOT_VELOCITY_V{ XMVector3Normalize(XMLoadFloat3(&SHOOT_DIRECTION)) * SHOOT_SPEED };
+	const float FIXED_DELTA_TIME{ 1.0f / 60.0f };
+	const float JUMP_POWER{ 10.0f };
+	const float FALL_SPEED{ 0.01f };
 }
 
 Player::Player(GameObject* _pParent) :
 	GameObject{ _pParent, "Player" },
-	hModel_{ -1 }
+	hModel_{ -1 },
+	shootTimeLeft_{ 0.0f }
 {
 }
 
@@ -57,17 +66,25 @@ void Player::Update()
 		moveDirection.x += 1.0f;
 	}
 
-	if (Input::IsKey(DIK_LEFTARROW))
+	if (shootTimeLeft_ > 0.0f)
 	{
-		transform_.rotate_.y += 0.001f * (180.0f / XM_PI);
+		shootTimeLeft_ -= FIXED_DELTA_TIME;
 	}
-	if (Input::IsKey(DIK_RIGHTARROW))
+
+	if (Input::IsMouseButton(0) && shootTimeLeft_ <= 0.0f)
 	{
-		transform_.rotate_.y -= 0.001f * (180.0f / XM_PI);
+		XMVECTOR shootVelocity{ SHOOT_VELOCITY_V };
+
+		// ƒvƒŒƒCƒ„[Šî€‚Ì•ûŒü‚É•ÏŠ·
+		shootVelocity = XMVector3TransformCoord(shootVelocity, transform_.GetNormalMatrix());
+
+		shootTimeLeft_ += SHOOT_COOL_TIME;
+		SnowBall* pSnowBall{ Instantiate<SnowBall>(GetParent()) };
+		pSnowBall->SetVelocity(shootVelocity);
+		pSnowBall->SetPosition(transform_.position_);
 	}
 
 	XMVECTOR mv{ XMLoadFloat3(&moveDirection) * MOVE_SPEED_PER_FRAME };
-
 	mv = XMVector3TransformCoord(mv, transform_.GetNormalMatrix());
 
 	XMVECTOR toPosition{ XMLoadFloat3(&transform_.position_) };
@@ -76,38 +93,20 @@ void Player::Update()
 
 	XMStoreFloat3(&transform_.position_, toPosition);
 
-	return;
-
-	Enemy* enemy{ FindGameObject<Enemy>()};
-
-	XMVECTOR ePos{ XMLoadFloat3(&enemy->GetTransform()->position_) };
-	XMVECTOR pPos{ XMLoadFloat3(&transform_.position_) };
-
-	float distance{ XMVector3Length(ePos - pPos).m128_f32[0] };
-
-	OutputDebugString(std::format(L"{}m\n", distance).c_str());
-	//OutputDebugString(std::format(L"{}m\n", distance).c_str());
-
-	if (Input::IsKey(DIK_X))
+	if (transform_.position_.y <= 0.0f)
 	{
-		transform_.position_.z += 0.1f;
+		onGrounded_ = true;
+		velocityY_ = 0.0f;
+		transform_.position_.y = 0.0f;
+		if (Input::IsKey(DIK_SPACE))
+		{
+			velocityY_ += JUMP_POWER;
+		}
 	}
-
-	return;
-
-	static float angle{};
-	angle += XM_2PI / 120;
-	while (angle >= XM_2PI)
+	else
 	{
-		angle -= XM_2PI;
-	}
-	transform_.position_.x = 6.0f * std::sinf(angle) - 3.0f;
-	transform_.position_.z = 6.0f * std::cosf(angle) - 3.0f;
-
-	transform_.rotate_.y += 0.1f;
-	if (transform_.rotate_.y > 60.0f)
-	{
-		DestroyMe();
+		onGrounded_ = false;
+		velocityY_ -= FALL_SPEED;
 	}
 }
 

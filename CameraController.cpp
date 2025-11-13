@@ -31,9 +31,6 @@ void CameraController::Update()
 	Transform* ppTransform{ pPlayer_->GetTransform() };
 	assert(ppTransform != nullptr && "プレイヤーのTransformが見つからなかった");
 
-	Camera::SetTarget(ppTransform->position_);
-
-
 	// マウスによる視点と方向操作
 	XMVECTOR currMousePositionV{ Input::GetMousePosition() };
 	XMVECTOR mouseDiffV{ currMousePositionV - prevMousePositionV_ };
@@ -45,17 +42,28 @@ void CameraController::Update()
 	prevMousePositionV_ = currMousePositionV;
 
 
-	const XMVECTOR CAMERA_OFFSET{ 0, 10, -30, 0 };
+	const XMVECTOR CAMERA_OFFSET{ 0, 10.0f, -30.0f, 0 };
+	const XMVECTOR CAMERA_TARGET{ 0, 3.0f, 30.0f, 0 };
 
-	XMVECTOR targetPosV{ CAMERA_OFFSET };
-	targetPosV = XMVector3TransformCoord(targetPosV, ppTransform->GetRotateMatrix());
-	targetPosV += XMLoadFloat3(&ppTransform->position_);
+	XMVECTOR playerPosV{ XMLoadFloat3(&ppTransform->position_) };
+
+	XMVECTOR toMovePosV{ CAMERA_OFFSET };
+	toMovePosV = XMVector3TransformCoord(toMovePosV, ppTransform->GetRotateMatrix());
+	toMovePosV += playerPosV;
 
 	XMVECTOR currentPosV{ XMLoadFloat3(&transform_.position_) };
 	
-	XMVECTOR toMovePosV{ (targetPosV - currentPosV) / 4.0f + currentPosV };
-
+	toMovePosV = (toMovePosV - currentPosV) / 4.0f + currentPosV;
+	
 	XMStoreFloat3(&transform_.position_, toMovePosV);
 
+
+	XMVECTOR targetPosV{ playerPosV + XMVector3TransformCoord(CAMERA_TARGET, ppTransform->GetRotateMatrix()) };
+	
+	
 	Camera::SetPosition(transform_.position_);
+
+	XMFLOAT3 targetPos{};
+	XMStoreFloat3(&targetPos, targetPosV);
+	Camera::SetTarget(targetPos);
 }

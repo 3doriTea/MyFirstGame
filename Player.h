@@ -17,4 +17,7 @@ public:
 
 private:
 	int hModel_;
+	float shootTimeLeft_;
+	bool onGrounded_;  // ’n–Ê‚ÉG‚ê‚Ä‚¢‚é‚©
+	float velocityY_;
 };

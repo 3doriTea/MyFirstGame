@@ -122,6 +122,9 @@
     <ClCompile Include="Engine\Cursor.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SnowBall.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -204,6 +207,9 @@
     </ClInclude>
     <ClInclude Include="Engine\Cursor.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="SnowBall.h">
+      <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
