@@ -66,6 +66,11 @@ public:
 	/// <param name="_pCollider"></param>
 	void AddCollider(SphereCollider* _pCollider);
 	/// <summary>
+	/// コライダーを取得する
+	/// </summary>
+	/// <returns>コライダーのポインタ なければ nullptr </returns>
+	SphereCollider* GetCollider() const { return pCollider_; }
+	/// <summary>
 	/// 指定したゲームオブジェクトから当たり判定をする
 	/// </summary>
 	/// <param name="_pTarget">対象となるゲームオブジェクト</param>
@@ -76,6 +81,9 @@ public:
 	/// </summary>
 	/// <param name="_pTarget">対象</param>
 	void RoundRobin(GameObject* _pTarget);
+
+	std::string_view GetName() const {return name_; }
+
 private:
 	struct Status
 	{

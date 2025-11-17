@@ -26,6 +26,13 @@ namespace Model
 	void SetTransform(const int _hModel, const Transform& _transform);
 	
 	/// <summary>
+	/// モデルの座標系にアクセス
+	/// </summary>
+	/// <param name="_hModel"></param>
+	/// <returns></returns>
+	Transform& TransformAt(const int _hModel);
+
+	/// <summary>
 	/// モデルを描画する
 	/// </summary>
 	/// <param name="_hModel"></param>

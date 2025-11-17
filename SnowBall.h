@@ -17,6 +17,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void OnCollision(GameObject* _pGameObject);
+
 private:
 	int hModel_;
 

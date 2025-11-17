@@ -37,9 +37,15 @@ int Model::Load(const std::string& _fileName)
 	return HANDLE;
 }
 
+
 void Model::SetTransform(const int _hModel, const Transform& _transform)
 {
 	models_[_hModel].transform = _transform;
+}
+
+Transform& Model::TransformAt(const int _hModel)
+{
+	return models_[_hModel].transform;
 }
 
 void Model::Draw(const int _hModel)

@@ -11,7 +11,10 @@ public:
 	~SphereCollider();
 
 	float GetRadius() const { return radius_; }
+	void SetRadius(const float _radius) { radius_ = _radius; }
 	DirectX::XMVECTOR GetCenter() const { return center_; }
+
+
 
 private:
 	DirectX::XMVECTOR center_;  // ‹…‚Ì’†S

@@ -1,10 +1,12 @@
 #include "SnowBall.h"
 #include "Engine/SphereCollider.h"
 #include "Engine/Model.h"
+#include "Enemy.h"
 
 namespace
 {
 	const float DEAD_ZONE_Y = -10.0f;
+	const char ENEMY_NAME[]{ "Enemy" };
 }
 
 SnowBall::SnowBall(GameObject* _pParent) :
@@ -30,6 +32,7 @@ void SnowBall::SetVelocity(const XMVECTOR& _v)
 void SnowBall::Initialize()
 {
 	hModel_ = Model::Load("SnowBall/SnowBall.fbx");
+	AddCollider(new SphereCollider{ {}, 3.0f });
 }
 
 void SnowBall::Update()
@@ -52,4 +55,13 @@ void SnowBall::Draw()
 	Model::SetTransform(hModel_, transform_);
 	Direct3D::UseOnceShader(Direct3D::SHADER_BULLET);
 	Model::Draw(hModel_);
+}
+
+void SnowBall::OnCollision(GameObject* _pGameObject)
+{
+	if (_pGameObject->GetName() == ENEMY_NAME)
+	{
+		Enemy* pEnemy{ dynamic_cast<Enemy*>(_pGameObject) };
+		pEnemy->Damage();
+	}
 }

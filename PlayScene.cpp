@@ -9,6 +9,14 @@
 #include "Ground.h"
 #include "Engine/Cursor.h"
 
+namespace
+{
+	const int ENEMY_COUNT{ 10 };
+	const int RAND_SEED[] { 99581, 99607, 99611, 99623, 99643 };
+	const int RAND_SEED_COUNT{ sizeof(RAND_SEED) / sizeof(int) };
+	const float WORLD_RADIUS{ 300.0f };
+}
+
 PlayScene::PlayScene(GameObject* pParent) :
 	GameObject{ pParent, "PlayScene" }
 {
@@ -32,8 +40,21 @@ void PlayScene::Initialize()
 	Player* pPlayer = Instantiate<Player>(this);
 	//Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, 3.5 });
 	//Instantiate<ChildOden>(pPlayer, DirectX::XMFLOAT3{ 0, 3, -3.5 });
+
 	
-	Enemy* pEnemy = Instantiate<Enemy>(this, pPlayer);
+	for (int i = 0; i < ENEMY_COUNT; i++)
+	{
+		float dist{ WORLD_RADIUS * static_cast<float>(i) / ENEMY_COUNT };
+		float rand{ static_cast<float>(i * RAND_SEED[i % RAND_SEED_COUNT]) };
+
+		XMVECTOR v{ std::cosf(rand), 0.0f, std::sinf(rand) };
+		v *= dist;
+
+		XMFLOAT3 position{};
+		XMStoreFloat3(&position, v);
+		Enemy* pEnemy = Instantiate<Enemy>(this, pPlayer, position);
+	}
+
 
 	CameraController* pCameraController{ Instantiate<CameraController>(this) };
 	Ground* pGround{ Instantiate<Ground>(this) };
