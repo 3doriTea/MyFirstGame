@@ -23,6 +23,25 @@ void Direct3D::SetShader(ShaderType _shaderType)
 	instance.pContext_->RSSetState(instance.shaders_[_shaderType].pRasterizerState);         // ラスタライザー
 }
 
+void Direct3D::SetWriteDepthBuffer(const bool _isWrite)
+{
+	Direct3D& instance{ *pInstance_ };
+	if (_isWrite)
+	{
+		instance.pContext_->OMSetRenderTargets(
+			1,
+			&instance.pRenderTargetView_,
+			instance.pDepthStencilView_);
+	}
+	else
+	{
+		instance.pContext_->OMSetRenderTargets(
+			1,
+			&instance.pRenderTargetView_,
+			nullptr);
+	}
+}
+
 HRESULT Direct3D::Initialize(const int winW, const int winH, HWND hWnd)
 {
 	DXGI_SWAP_CHAIN_DESC scDesc{};

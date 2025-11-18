@@ -55,6 +55,7 @@ private:
 
 public:
 	static void SetShader(ShaderType _shaderType);
+	static void SetWriteDepthBuffer(const bool _isWrite);
 
 	/// <summary>
 	/// ‰Šú‰»ˆ—

@@ -42,6 +42,16 @@ void Camera::SetTarget(const XMFLOAT3& target)
 	target_ = target;
 }
 
+XMFLOAT3 Camera::GetPosition()
+{
+	return position_;
+}
+
+XMFLOAT3 Camera::GetTarget()
+{
+	return target_;
+}
+
 //ƒrƒ…[s—ñ‚ğæ“¾
 XMMATRIX Camera::GetViewMatrix()
 {

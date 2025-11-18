@@ -161,6 +161,7 @@
     <ClInclude Include="Ground.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayScene.h" />
+    <ClInclude Include="SceneCube.h" />
     <ClInclude Include="ShaderInitializer.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SnowBall.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Ground.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayScene.cpp" />
+    <ClCompile Include="SceneCube.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SnowBall.cpp" />
     <ClCompile Include="TestScene.cpp" />

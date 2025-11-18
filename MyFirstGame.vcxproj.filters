@@ -131,6 +131,9 @@
     <ClCompile Include="EffectBall.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SceneCube.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -221,6 +224,9 @@
       <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="EffectBall.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneCube.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>

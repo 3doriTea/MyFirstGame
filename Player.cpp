@@ -15,7 +15,7 @@ namespace
 	const float GROUND_FRICTION_RATE_PER_FRAME{ 1.6f };
 	const float SHOOT_COOL_TIME{ 0.1f };
 	const float SHOOT_SPEED{ 3.0f };
-	const XMFLOAT3 SHOOT_DIRECTION{ 0.0f, 0.5f, 1.0f };
+	const XMFLOAT3 SHOOT_DIRECTION{ 0.0f, 0.3f, 1.0f };
 	const XMVECTOR SHOOT_VELOCITY_V{ XMVector3Normalize(XMLoadFloat3(&SHOOT_DIRECTION)) * SHOOT_SPEED };
 	const float FIXED_DELTA_TIME{ 1.0f / 60.0f };
 	const float JUMP_POWER{ 1.0f };

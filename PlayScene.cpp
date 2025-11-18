@@ -8,6 +8,7 @@
 #include "CameraController.h"
 #include "Ground.h"
 #include "Engine/Cursor.h"
+#include "SceneCube.h"
 
 namespace
 {
@@ -60,6 +61,8 @@ void PlayScene::Initialize()
 	Ground* pGround{ Instantiate<Ground>(this) };
 
 	Cursor::SetLock(true);
+
+	Instantiate<SceneCube>(this, XMFLOAT3{ 0, 0, 0 });
 }
 
 void PlayScene::Update()

@@ -21,6 +21,12 @@ namespace Camera
 	// 焦点（見る位置）を設定
 	void SetTarget(const XMFLOAT3& target);
 
+	// カメラの座標を取得する
+	XMFLOAT3 GetPosition();
+
+	// カメラの焦点の座標を取得する
+	XMFLOAT3 GetTarget();
+
 	// ビュー行列を取得
 	XMMATRIX GetViewMatrix();
 
