@@ -8,6 +8,7 @@ namespace
 	const float LIFE_TIME{ 5.0f };
 	const float SMALLING_TIME{ 1.0f };
 	const float GROUND_HEIGHT{ 0.5f };
+	const float IGNORE_BOUNSE{ 1.0f };
 }
 
 EffectBall::EffectBall(GameObject* _pRoot) :
@@ -63,7 +64,14 @@ void EffectBall::Update()
 		}
 		else
 		{
+			
 			velocity_[i].m128_f32[Y] = velocity_[i].m128_f32[Y] * -0.8f;
+			
+			if (velocity_[i].m128_f32[Y] <= IGNORE_BOUNSE)
+			{
+				velocity_[i].m128_f32[Y] = 0.0f;
+			}
+
 			v.m128_f32[Y] = GROUND_HEIGHT;
 		}
 
