@@ -20,6 +20,7 @@ namespace
 	const float FIXED_DELTA_TIME{ 1.0f / 60.0f };
 	const float JUMP_POWER{ 1.0f };
 	const float FALL_SPEED{ 0.01f };
+	const float RESPAWN_HEIGHT{ 200.0f };
 
 	const float GROUND_RADIUS{ 300.0f };
 	const float PLAYER_COLL_RADIUS{ 3.0f };
@@ -125,6 +126,14 @@ void Player::Update()
 	}
 
 	transform_.position_.y += velocityY_;
+
+	// リスポーンする高度まで下がった
+	if (transform_.position_.y < -RESPAWN_HEIGHT)
+	{
+		transform_.position_.x = 0.0f;
+		transform_.position_.y = RESPAWN_HEIGHT;
+		transform_.position_.z = 0.0f;
+	}
 }
 
 void Player::Draw()

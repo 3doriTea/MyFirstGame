@@ -134,6 +134,9 @@
     <ClCompile Include="SceneCube.cpp">
       <Filter>Cプラ ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="GameOverScene.cpp">
+      <Filter>Cプラ ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -227,6 +230,9 @@
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SceneCube.h">
+      <Filter>Cプラ ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverScene.h">
       <Filter>Cプラ ファイル</Filter>
     </ClInclude>
   </ItemGroup>

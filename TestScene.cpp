@@ -19,10 +19,10 @@ void TestScene::Initialize()
 {
 	Instantiate<Snake>(this);
 
-	Camera::SetPosition({ 0, 30.0f, -30.0f });
-	Camera::SetTarget({ 0, 0.0f, 50.0f });
+	Camera::SetPosition({ 0, 0, 0 });
+	Camera::SetTarget({ 0, 0, -1.0f });
 
-	Instantiate<SceneCube>(this, XMFLOAT3{ 0, XM_PI, 0 });
+	Instantiate<SceneCube>(this, XMFLOAT3{ 0, 0, 0 });
 }
 
 void TestScene::Update()

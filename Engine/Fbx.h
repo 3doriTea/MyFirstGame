@@ -43,11 +43,16 @@ private:
 		//DirectX::XMVECTOR lightColor;  // 平行光線の色
 		//float ambientValue;  // 環境光の明るさ
 		XMMATRIX matWVP;
-		XMMATRIX matNormal;
+		XMMATRIX matRotateW;
+		XMMATRIX matTexture;
+		XMMATRIX matW;
 		XMFLOAT4 diffuse;
-		//XMINT4 materialFlag;
+		XMFLOAT4 lightDir;
+		XMFLOAT4 lightColor;
+		FLOAT ambientValue;
+		BOOL materialFlag;
 		//XMFLOAT4 materialFlag;
-		BOOL materialFLag;  // 16byte単位で送られるから仕方ない
+		//BOOL materialFLag;  // 16byte単位で送られるから仕方ない
 
 	};
 

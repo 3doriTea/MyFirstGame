@@ -9,9 +9,11 @@
 #include "Ground.h"
 #include "Engine/Cursor.h"
 #include "SceneCube.h"
+#include "GameOverScene.h"
 
 namespace
 {
+	const float DELTA_TIME{ 1.0f / 60.0f };
 	const int ENEMY_COUNT{ 10 };
 	const int RAND_SEED[] { 99581, 99607, 99611, 99623, 99643 };
 	const int RAND_SEED_COUNT{ sizeof(RAND_SEED) / sizeof(int) };
@@ -19,7 +21,10 @@ namespace
 }
 
 PlayScene::PlayScene(GameObject* pParent) :
-	GameObject{ pParent, "PlayScene" }
+	GameObject{ pParent, "PlayScene" },
+	enemyCount_{ 0 },
+	toOver_{ false },
+	timeLeft_{}
 {
 }
 
@@ -54,6 +59,8 @@ void PlayScene::Initialize()
 		XMFLOAT3 position{};
 		XMStoreFloat3(&position, v);
 		Enemy* pEnemy = Instantiate<Enemy>(this, pPlayer, position);
+
+		enemyCount_++;
 	}
 
 
@@ -76,9 +83,13 @@ void PlayScene::Update()
 		Cursor::SetLock(true);
 	}
 
-	if (Input::IsKeyDown(DIK_F))
+	if (toOver_)
 	{
-		GetSceneManager()->Move(SceneManager::Scene::Test);
+		timeLeft_ -= DELTA_TIME;
+		if (timeLeft_ <= 0.0f)
+		{
+			GetSceneManager()->Move(SceneManager::Scene::Over);
+		}
 	}
 }
 
@@ -88,4 +99,16 @@ void PlayScene::Draw()
 
 void PlayScene::Release()
 {
+}
+
+void PlayScene::OnBoomEnemy()
+{
+	enemyCount_--;
+	if (enemyCount_ <= 0)
+	{
+		SceneCube* pSceneCube{ Instantiate<SceneCube>(this, XMFLOAT3{ 0, 0, 0 }, true) };
+		pSceneCube->Fire();
+		timeLeft_ = SceneCube::GetDestroyTime();
+		toOver_ = true;
+	}
 }

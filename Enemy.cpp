@@ -2,6 +2,7 @@
 #include "Engine/Model.h"
 #include "Engine/SphereCollider.h"
 #include "EffectBall.h"
+#include "PlayScene.h"
 
 namespace
 {
@@ -69,5 +70,10 @@ void Enemy::Damage()
 		DestroyMe();
 		EffectBall* pEffectBall{ Instantiate<EffectBall>(GetParent()) };
 		pEffectBall->SetPosition(transform_.position_);
+
+		PlayScene* pPlayScene{ dynamic_cast<PlayScene*>(GetParent()) };
+		assert(pPlayScene && "プレイシーンにアクセスできなかった");
+
+		pPlayScene->OnBoomEnemy();
 	}
 }

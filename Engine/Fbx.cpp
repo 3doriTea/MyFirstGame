@@ -100,8 +100,11 @@ void Fbx::Draw(Transform& transform)
 
 	CONSTANT_BUFFER cb{};
 	cb.matWVP = XMMatrixTranspose(transform.GetWorldMatrix() * Camera::GetViewMatrix() * Camera::GetProjectionMatrix());
-	cb.matNormal = XMMatrixTranspose(transform.GetNormalMatrix());//XMMatrixIdentity();
-
+	cb.matRotateW = XMMatrixTranspose(transform.GetNormalMatrix());//XMMatrixIdentity();
+	cb.matTexture = XMMatrixIdentity();
+	cb.ambientValue = 0.3f;
+	cb.lightDir = { -1.0f, 0.5f, -0.7f, 0.0f };
+	cb.lightColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 	//D3D11_MAPPED_SUBRESOURCE pdata;
 	//Direct3D::Instance().pContext_->Map(pConstantBuffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);	// GPUからのデータアクセスを止める
 	//memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));  // データを値を送る
@@ -117,7 +120,7 @@ void Fbx::Draw(Transform& transform)
 	for (int i = 0; i < materialCount_; i++)
 	{
 		cb.diffuse = materials_[i].diffuse;
-		cb.materialFLag = materials_[i].pTexture == nullptr ? 0 : 1;//UINT32_MAX;
+		cb.materialFlag = materials_[i].pTexture == nullptr ? 0 : 1;//UINT32_MAX;
 
 		// インデックスバッファをセット
 		stride = sizeof(int);

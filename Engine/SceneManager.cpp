@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 #include "../PlayScene.h"
 #include "../TestScene.h"
+#include "../GameOverScene.h"
 
 SceneManager::SceneManager(GameObject* _pParent) :
 	GameObject{ _pParent, "SceneManager" }
@@ -34,6 +35,9 @@ void SceneManager::Update()
 			break;
 		case SceneManager::Scene::PLay:
 			Instantiate<PlayScene>(this);
+			break;
+		case SceneManager::Scene::Over:
+			Instantiate<GameOverScene>(this);
 			break;
 		case SceneManager::Scene::Max:
 		default:
