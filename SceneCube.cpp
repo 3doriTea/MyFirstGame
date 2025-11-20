@@ -64,7 +64,7 @@ void SceneCube::Update()
 void SceneCube::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
-	//Direct3D::SetWriteDepthBuffer(false);
+	Direct3D::SetWriteDepthBuffer(false);
 	Direct3D::UseOnceShader(Direct3D::SHADER_BULLET);
 	Model::Draw(hModel_);
 	Direct3D::SetWriteDepthBuffer(true);
